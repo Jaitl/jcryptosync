@@ -1,5 +1,6 @@
 package com.jcryptosync.controllers.login;
 
+import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
@@ -33,6 +34,7 @@ public class LoginController extends BaseLoginController {
 
         if(key != null) {
             pathToKey.setText(key.getPath());
+            QuickPreferences.setPathToKey(key.getPath());
         }
     }
 
@@ -44,6 +46,7 @@ public class LoginController extends BaseLoginController {
 
         if(container != null) {
             pathToContainer.setText(container.getPath());
+            QuickPreferences.setPathToContainer(container.getPath());
         }
     }
 
@@ -78,6 +81,16 @@ public class LoginController extends BaseLoginController {
         hideSecondPassword();
         createButton.setText("Создать контейнер");
         enterButton.setText("Войти");
+
+        String pathKey = QuickPreferences.getPathToKey();
+
+        if(pathToKey != null)
+            pathToKey.setText(pathKey);
+
+        String pathContainer = QuickPreferences.getPathToContainer();
+
+        if(pathContainer != null)
+            pathToContainer.setText(pathContainer);
     }
 
 
