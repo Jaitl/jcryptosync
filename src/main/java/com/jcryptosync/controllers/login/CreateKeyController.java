@@ -1,8 +1,8 @@
 package com.jcryptosync.controllers.login;
 
-import com.jcryptosync.PrimaryKeyManager;
-import com.jcryptosync.controllers.ContainerStageFactory;
+import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.controllers.LoginSceneFactory;
+import com.jcryptosync.utils.PrimaryKeyUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -54,13 +54,13 @@ public class CreateKeyController extends BaseLoginController {
 
         if(checkFields()) {
             try {
-                PrimaryKeyManager.saveNewPrimaryKey(firstPassword.getText(), Paths.get(pathToKey.getText()));
+                PrimaryKeyUtils.saveNewCryptKeyToFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
-                Stage stage = ContainerStageFactory.createContainerStage(getClass().getClassLoader());
+                Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
                 stage.show();
 
                 ((Node)(event.getSource())).getScene().getWindow().hide();
-                
+
             } catch (IOException e) {
                 setError("Ошибка при сохранении ключа", pathToKey);
             }

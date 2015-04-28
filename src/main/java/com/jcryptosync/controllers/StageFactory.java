@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ContainerStageFactory {
+public class StageFactory {
     public static Stage createContainerStage(ClassLoader loader) {
         Parent root = null;
         FXMLLoader fxmlLoader = new FXMLLoader(loader.getResource("fxml/container.fxml"));

@@ -5,7 +5,11 @@ import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -116,6 +120,30 @@ public class PrimaryKeyUtils {
         }
 
         return PrimaryKey.fromJson(jsonKey);
+    }
 
+    public static void saveNewCryptKeyToFile(String password, Path pathToKey) throws IOException {
+        PrimaryKey primaryKey = PrimaryKeyUtils.generateNewPrimaryKey();
+        SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
+        byte[] cryptKey = PrimaryKeyUtils.encryptKey(primaryKey, passKey);
+
+        Files.write(pathToKey, cryptKey, StandardOpenOption.CREATE_NEW);
+    }
+
+    public static PrimaryKey loadPrimaryKeyFromFile(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
+        byte[] cryptKey;
+
+        cryptKey = Files.readAllBytes(pathToKey);
+
+
+        SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
+
+        return PrimaryKeyUtils.decryptKey(cryptKey, passKey);
+    }
+
+    public static boolean checkPassword(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
+        PrimaryKey key = loadPrimaryKeyFromFile(password, pathToKey);
+
+        return key.getType().contains("AES");
     }
 }

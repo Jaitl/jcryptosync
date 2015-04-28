@@ -1,9 +1,9 @@
 package com.jcryptosync.controllers.login;
 
-import com.jcryptosync.PrimaryKeyManager;
-import com.jcryptosync.controllers.ContainerStageFactory;
+import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
+import com.jcryptosync.utils.PrimaryKeyUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -53,10 +53,10 @@ public class LoginController extends BaseLoginController {
 
         if(checkFields()) {
             try {
-                boolean passIsCorrect = PrimaryKeyManager.checkPassword(firstPassword.getText(), Paths.get(pathToKey.getText()));
+                boolean passIsCorrect = PrimaryKeyUtils.checkPassword(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
                 if(passIsCorrect) {
-                    Stage stage = ContainerStageFactory.createContainerStage(getClass().getClassLoader());
+                    Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
                     stage.show();
 
                     ((Node)(event.getSource())).getScene().getWindow().hide();
