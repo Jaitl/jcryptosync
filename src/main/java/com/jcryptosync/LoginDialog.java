@@ -1,29 +1,20 @@
 package com.jcryptosync;
 
+import com.jcryptosync.controllers.LoginSceneFactory;
 import javafx.application.Application;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class LoginDialog  extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/login.fxml"));
-        Parent root = fxmlLoader.load();
 
-        LoginController controller = fxmlLoader.getController();
-        controller.enableLoginMode();
 
-        Scene scene = new Scene(root, 500, 350);
-        scene.getStylesheets().add("styles/main.css");
+        Scene scene = LoginSceneFactory.createLoginScene(getClass().getClassLoader());
 
         primaryStage.setMinHeight(500);
-        primaryStage.setMinHeight(350);
+        primaryStage.setMinHeight(370);
         primaryStage.setTitle("Авторизация");
         primaryStage.setScene(scene);
         primaryStage.show();

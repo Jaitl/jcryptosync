@@ -5,23 +5,23 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:controller="com.jcryptosync.LoginController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="350.0" minWidth="500.0" prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="370.0" minWidth="500.0" prefHeight="370.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <VBox prefHeight="0.0" prefWidth="0.0">
                <children>
                   <Label text="Пароль:" />
-                  <TextField fx:id="firstPassword" />
+                  <PasswordField fx:id="firstPassword" />
                </children>
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </VBox>
-            <VBox prefHeight="0.0" prefWidth="0.0" fx:id="secondPasswordContainer">
+            <VBox fx:id="secondPasswordContainer" prefHeight="0.0" prefWidth="0.0">
                <children>
-                  <Label text="Повторите пароль:"  fx:id="secondPasswordLabel" />
-                  <TextField fx:id="secondPassword" />
+                  <Label fx:id="secondPasswordLabel" text="Повторите пароль:" />
+                  <PasswordField fx:id="secondPassword" />
                </children>
                <VBox.margin>
                   <Insets top="5.0" />
@@ -32,11 +32,11 @@
                   <Label text="Путь до ключа:" />
                   <HBox prefHeight="0.0" prefWidth="0.0">
                      <children>
-                        <TextField HBox.hgrow="ALWAYS">
+                        <TextField fx:id="pathToKey" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin></TextField>
-                        <Button mnemonicParsing="false" text="Выбрать" />
+                        <Button mnemonicParsing="false" onAction="#selectKeyAction" text="Выбрать" />
                      </children>
                   </HBox>
                </children>
@@ -46,14 +46,14 @@
             </VBox>
             <VBox prefHeight="0.0" prefWidth="0.0">
                <children>
-                  <Label text="Путь до рабочей папки:" />
+                  <Label text="Путь до контейнера:" />
                   <HBox prefHeight="0.0" prefWidth="0.0">
                      <children>
-                        <TextField HBox.hgrow="ALWAYS">
+                        <TextField fx:id="pathToContainer" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin></TextField>
-                        <Button mnemonicParsing="false" text="Выбрать" />
+                        <Button mnemonicParsing="false" onAction="#selectContainerAction" text="Выбрать" />
                      </children>
                   </HBox>
                </children>
@@ -71,18 +71,27 @@
       </VBox>
    </center>
    <bottom>
-      <HBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" fx:id="createButton" text="Новый контейнер" onAction="#createAction">
-               <HBox.margin>
-                  <Insets right="10.0" />
-               </HBox.margin>
-            </Button>
-            <Button mnemonicParsing="false" fx:id="enterButton" text="Войти" />
+            <Label fx:id="errorTitleLabel" text="Ошибка:" />
+            <TextArea fx:id="errorArea" editable="false" wrapText="true" />
+            <HBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0">
+               <children>
+                  <Button fx:id="createButton" mnemonicParsing="false" onAction="#changeControllerAction" text="Создать контейнер">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="enterButton" mnemonicParsing="false" onAction="#executeAction" text="Войти" />
+               </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
          </children>
          <BorderPane.margin>
-            <Insets bottom="10.0" top="10.0" />
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
-      </HBox>
+      </VBox>
    </bottom>
 </BorderPane>

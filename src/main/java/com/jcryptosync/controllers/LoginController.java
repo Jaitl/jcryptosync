@@ -1,109 +1,60 @@
 package com.jcryptosync.controllers;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 
-public class LoginController {
+public class LoginController extends BaseLoginController {
+    @Override
+    protected void changeControllerAction(ActionEvent event) {
+        Node node=(Node) event.getSource();
+        Stage stage=(Stage) node.getScene().getWindow();
 
-    private enum LoginMode {
-        Login,
-        Create
-    };
+        Scene scene = LoginSceneFactory.createNewPrimaryKeyScene(getClass().getClassLoader());
 
-    private LoginMode loginMode = LoginMode.Login;
-
-    @FXML
-    private TextField firstPassword;
-    @FXML
-    private TextField secondPassword;
-    @FXML
-    private VBox secondPasswordContainer;
-    @FXML
-    private Label secondPasswordLabel;
-    @FXML
-    private Button createButton;
-    @FXML
-    private Button enterButton;
-    @FXML
-    private TextField pathToKey;
-    @FXML
-    private TextField pathToContainer;
-
-    @FXML
-    public void createAction() {
-        if(loginMode == LoginMode.Login) {
-            loginMode = LoginMode.Create;
-            enableCreateMode();
-        } else if (loginMode == LoginMode.Create) {
-            loginMode = LoginMode.Login;
-            enableLoginMode();
-        }
+        stage.setScene(scene);
     }
 
-    @FXML
-    private void selectKeyAction() {
+    @Override
+    protected void selectKeyAction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения ключа");
-        File key = null;
-
-        if(loginMode == LoginMode.Login) {
-            key = fileChooser.showOpenDialog(null);
-        } else if(loginMode == LoginMode.Create) {
-            key = fileChooser.showSaveDialog(null);
-        }
+        File key = key = fileChooser.showOpenDialog(null);
 
         if(key != null) {
             pathToKey.setText(key.getPath());
         }
     }
 
-    @FXML
-    private void selectContainerAction() {
+    @Override
+    protected void selectContainerAction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения контейнера");
-        File container = null;
-
-        if(loginMode == LoginMode.Login) {
-            container = fileChooser.showOpenDialog(null);
-        } else if(loginMode == LoginMode.Create) {
-            container = fileChooser.showSaveDialog(null);
-        }
+        File container = fileChooser.showOpenDialog(null);
 
         if(container != null) {
             pathToContainer.setText(container.getPath());
         }
     }
 
-    @FXML
-    public void enterAction() {
+    @Override
+    public void executeAction() {
 
     }
 
-    public void enableLoginMode() {
+    @Override
+    public void prepareDialog() {
+        super.prepareDialog();
+
         hideSecondPassword();
         createButton.setText("Создать контейнер");
         enterButton.setText("Войти");
     }
 
-    private void enableCreateMode() {
-        showSecondPassword();
-        createButton.setText("Отменить");
-        enterButton.setText("Создать");
-    }
-
-    private void showSecondPassword() {
-        secondPasswordContainer.setManaged(true);
-        secondPassword.setManaged(true);
-        secondPassword.setVisible(true);
-        secondPasswordLabel.setManaged(true);
-        secondPasswordLabel.setVisible(true);
-    }
 
     private void hideSecondPassword() {
         secondPasswordContainer.setManaged(false);

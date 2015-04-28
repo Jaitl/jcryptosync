@@ -1,22 +1,31 @@
 package com.jcryptosync;
 
-import javax.crypto.KeyGenerator;
+import com.jcryptosync.utils.PrimaryKeyUtils;
+
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class PrimaryKeyManager {
-    public PrimaryKey generateKey() {
-        KeyGenerator keyGen = null;
 
-        try {
-            keyGen = KeyGenerator.getInstance("AES");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+    public static void saveNewPrimaryKey(String password, Path pathToKey) throws IOException {
+        PrimaryKey primaryKey = PrimaryKeyUtils.generateNewPrimaryKey();
+        SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
+        byte[] cryptKey = PrimaryKeyUtils.encryptKey(primaryKey, passKey);
 
-        keyGen.init(256);
-        SecretKey secretKey = keyGen.generateKey();
+        Files.write(pathToKey, cryptKey, StandardOpenOption.CREATE_NEW);
+    }
 
-        return new PrimaryKey(secretKey);
+    public static PrimaryKey loadPrimaryKey(String password, Path pathToKey) throws IOException {
+        byte[] cryptKey = new byte[0];
+
+        cryptKey = Files.readAllBytes(pathToKey);
+
+
+        SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
+
+        return PrimaryKeyUtils.decryptKey(cryptKey, passKey);
     }
 }
