@@ -1,5 +1,6 @@
 package com.jcryptosync;
 
+import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.utils.PrimaryKeyUtils;
 
 import javax.crypto.SecretKey;
@@ -18,7 +19,7 @@ public class PrimaryKeyManager {
         Files.write(pathToKey, cryptKey, StandardOpenOption.CREATE_NEW);
     }
 
-    public static PrimaryKey loadPrimaryKey(String password, Path pathToKey) throws IOException {
+    public static PrimaryKey loadPrimaryKey(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
         byte[] cryptKey = new byte[0];
 
         cryptKey = Files.readAllBytes(pathToKey);
@@ -27,5 +28,11 @@ public class PrimaryKeyManager {
         SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
 
         return PrimaryKeyUtils.decryptKey(cryptKey, passKey);
+    }
+
+    public static boolean checkPassword(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
+        PrimaryKey key = loadPrimaryKey(password, pathToKey);
+
+        return key.getType().contains("AES");
     }
 }

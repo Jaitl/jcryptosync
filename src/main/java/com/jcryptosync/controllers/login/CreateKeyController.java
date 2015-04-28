@@ -1,6 +1,8 @@
-package com.jcryptosync.controllers;
+package com.jcryptosync.controllers.login;
 
 import com.jcryptosync.PrimaryKeyManager;
+import com.jcryptosync.controllers.ContainerStageFactory;
+import com.jcryptosync.controllers.LoginSceneFactory;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -11,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class CreatePrimaryKeyController extends BaseLoginController {
+public class CreateKeyController extends BaseLoginController {
 
 
     @Override
@@ -47,51 +49,38 @@ public class CreatePrimaryKeyController extends BaseLoginController {
     }
 
     @Override
-    protected void executeAction() {
+    protected void executeAction(ActionEvent event) {
         clearErrors();
 
         if(checkFields()) {
             try {
                 PrimaryKeyManager.saveNewPrimaryKey(firstPassword.getText(), Paths.get(pathToKey.getText()));
+
+                Stage stage = ContainerStageFactory.createContainerStage(getClass().getClassLoader());
+                stage.show();
+
+                ((Node)(event.getSource())).getScene().getWindow().hide();
+                
             } catch (IOException e) {
                 setError("Ошибка при сохранении ключа", pathToKey);
             }
         }
     }
 
-    private boolean checkFields() {
+    @Override
+    protected boolean checkFields() {
 
-        if(firstPassword.getText().trim().length() == 0) {
-            setError("Поле с паролем не заполнено", firstPassword);
+        if(!super.checkFields())
             return false;
-        }
-
-        if(!checkPassword(firstPassword.getText())) {
-            setError("Пароль слишком простой", firstPassword);
-            return false;
-        }
 
         if(!firstPassword.getText().equals(secondPassword.getText())) {
             setError("Пароли не совпадают", secondPassword);
             return false;
         }
 
-        if(pathToKey.getText().trim().length() == 0) {
-            setError("Путь до ключа не выбран", pathToKey);
-            return false;
-        }
-
-        if(pathToContainer.getText().trim().length() == 0) {
-            setError("Путь контейнера не выбран", pathToContainer);
-            return false;
-        }
-
         return true;
     }
 
-    private boolean checkPassword(String password) {
-        return true;
-    }
 
     @Override
     public void prepareDialog() {

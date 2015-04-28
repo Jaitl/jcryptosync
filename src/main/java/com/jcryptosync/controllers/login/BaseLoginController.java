@@ -1,4 +1,4 @@
-package com.jcryptosync.controllers;
+package com.jcryptosync.controllers.login;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,7 +35,31 @@ public abstract class BaseLoginController {
     @FXML
     protected abstract void selectContainerAction();
     @FXML
-    protected abstract void executeAction();
+    protected abstract void executeAction(ActionEvent event);
+
+    protected boolean checkFields() {
+        if(firstPassword.getText().trim().length() == 0) {
+            setError("Поле с паролем не заполнено", firstPassword);
+            return false;
+        }
+
+        if(!checkPassword(firstPassword.getText())) {
+            setError("Пароль слишком простой", firstPassword);
+            return false;
+        }
+
+        if(pathToKey.getText().trim().length() == 0) {
+            setError("Путь до ключа не выбран", pathToKey);
+            return false;
+        }
+
+        if(pathToContainer.getText().trim().length() == 0) {
+            setError("Путь до контейнера не выбран", pathToContainer);
+            return false;
+        }
+
+        return true;
+    }
 
     private TextField lastField;
 
@@ -58,5 +82,9 @@ public abstract class BaseLoginController {
 
         if(lastField != null)
             lastField.getStyleClass().removeAll("error");
+    }
+
+    protected boolean checkPassword(String password) {
+        return true;
     }
 }

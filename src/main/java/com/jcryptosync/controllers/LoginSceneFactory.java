@@ -1,5 +1,8 @@
 package com.jcryptosync.controllers;
 
+import com.jcryptosync.controllers.login.BaseLoginController;
+import com.jcryptosync.controllers.login.CreateKeyController;
+import com.jcryptosync.controllers.login.LoginController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,10 +24,10 @@ public class LoginSceneFactory {
         return sceneMap.get("login");
     }
 
-    public static Scene createNewPrimaryKeyScene(ClassLoader loader) {
+    public static Scene createNewKeyScene(ClassLoader loader) {
 
         if(!sceneMap.containsKey("primaryKey")) {
-            Scene primaryKeyScene = createScene(loader, new CreatePrimaryKeyController());
+            Scene primaryKeyScene = createScene(loader, new CreateKeyController());
             sceneMap.put("primaryKey", primaryKeyScene);
         }
 

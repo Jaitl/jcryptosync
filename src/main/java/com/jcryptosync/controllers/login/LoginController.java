@@ -1,5 +1,9 @@
-package com.jcryptosync.controllers;
+package com.jcryptosync.controllers.login;
 
+import com.jcryptosync.PrimaryKeyManager;
+import com.jcryptosync.controllers.ContainerStageFactory;
+import com.jcryptosync.controllers.LoginSceneFactory;
+import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -7,6 +11,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 public class LoginController extends BaseLoginController {
     @Override
@@ -14,7 +20,7 @@ public class LoginController extends BaseLoginController {
         Node node=(Node) event.getSource();
         Stage stage=(Stage) node.getScene().getWindow();
 
-        Scene scene = LoginSceneFactory.createNewPrimaryKeyScene(getClass().getClassLoader());
+        Scene scene = LoginSceneFactory.createNewKeyScene(getClass().getClassLoader());
 
         stage.setScene(scene);
     }
@@ -42,9 +48,28 @@ public class LoginController extends BaseLoginController {
     }
 
     @Override
-    public void executeAction() {
+    public void executeAction(ActionEvent event) {
+        clearErrors();
 
+        if(checkFields()) {
+            try {
+                boolean passIsCorrect = PrimaryKeyManager.checkPassword(firstPassword.getText(), Paths.get(pathToKey.getText()));
+
+                if(passIsCorrect) {
+                    Stage stage = ContainerStageFactory.createContainerStage(getClass().getClassLoader());
+                    stage.show();
+
+                    ((Node)(event.getSource())).getScene().getWindow().hide();
+                }
+            } catch (IOException e) {
+                setError("Файл с ключем недоступен.", pathToKey);
+            } catch (NoCorrectPasswordException e) {
+                setError("Неправильный пароль.", firstPassword);
+            }
+        }
     }
+
+
 
     @Override
     public void prepareDialog() {

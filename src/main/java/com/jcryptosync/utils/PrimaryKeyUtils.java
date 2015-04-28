@@ -1,6 +1,7 @@
 package com.jcryptosync.utils;
 
 import com.jcryptosync.PrimaryKey;
+import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -81,7 +82,7 @@ public class PrimaryKeyUtils {
         return cipherKey;
     }
 
-    public static PrimaryKey decryptKey(byte[] cryptKey, SecretKey key) {
+    public static PrimaryKey decryptKey(byte[] cryptKey, SecretKey key) throws NoCorrectPasswordException {
         Cipher cipher = null;
 
         try {
@@ -104,7 +105,7 @@ public class PrimaryKeyUtils {
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
-            e.printStackTrace();
+            throw new NoCorrectPasswordException("Неправильный пароль");
         }
 
         String jsonKey = null;
