@@ -1,4 +1,4 @@
-package com.jcryptosync.fileCrypto;
+package com.jcryptosync.container.file;
 
 import com.google.gson.Gson;
 import com.jcryptosync.QuickPreferences;

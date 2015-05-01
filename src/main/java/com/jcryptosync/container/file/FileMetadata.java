@@ -1,4 +1,4 @@
-package com.jcryptosync.fileCrypto;
+package com.jcryptosync.container.file;
 
 public class FileMetadata {
     private String id;

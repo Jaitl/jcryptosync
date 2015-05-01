@@ -3,7 +3,10 @@ package com.jcryptosync.utils;
 import com.jcryptosync.PrimaryKey;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -12,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class PrimaryKeyUtils {
 

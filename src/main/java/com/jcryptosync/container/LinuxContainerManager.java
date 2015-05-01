@@ -2,7 +2,7 @@ package com.jcryptosync.container;
 
 import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.exceptoins.ContainerMountException;
-import com.jcryptosync.fileCrypto.FileStorage;
+import com.jcryptosync.container.file.FileStorage;
 import com.jcryptosync.utils.ContainerUtils;
 
 import java.nio.file.Path;
@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public class LinuxContainerManager extends ContainerManager {
 
     private Path pathToFilesDir = QuickPreferences.getPathToFilesDir();
-    FilesFolderWatcher watcher = new FilesFolderWatcher();
+    FilesFolderWatcher watcher;
 
     @Override
     public void openContainer() throws ContainerMountException {
@@ -29,12 +29,12 @@ public class LinuxContainerManager extends ContainerManager {
     @Override
     public void startFileWatcher() {
         FileStorage.getInstance().loadMetadata();
+        watcher = new FilesFolderWatcher();
 
         log.info("decrypt Files folder");
-        ContainerDecrypt containerDecrypt = new ContainerDecrypt();
-        containerDecrypt.decrypt();
-
-        watcher.start();
+        ContainerDecryptAsync containerDecryptAsync = new ContainerDecryptAsync();
+        containerDecryptAsync.setCallback(() -> watcher.start());
+        containerDecryptAsync.fork();
     }
 
     @Override

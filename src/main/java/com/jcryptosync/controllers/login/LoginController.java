@@ -1,8 +1,8 @@
 package com.jcryptosync.controllers.login;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.controllers.LoginSceneFactory;
+import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.utils.PrimaryKeyUtils;
 import javafx.event.ActionEvent;

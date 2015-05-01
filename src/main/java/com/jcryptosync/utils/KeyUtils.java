@@ -1,7 +1,5 @@
 package com.jcryptosync.utils;
 
-import com.jcryptosync.PrimaryKey;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;

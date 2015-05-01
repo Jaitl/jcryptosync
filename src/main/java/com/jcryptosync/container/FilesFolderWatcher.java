@@ -1,7 +1,6 @@
 package com.jcryptosync.container;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.fileCrypto.FileCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +45,6 @@ public class FilesFolderWatcher extends Thread {
 
         WatchKey key = null;
 
-        FileCrypt fileCrypt = new FileCrypt();
-
         while (true) {
             try {
                 key = watchService.take();
@@ -69,7 +66,7 @@ public class FilesFolderWatcher extends Thread {
                     log.info("created new file: " + newPath);
                     newPath = QuickPreferences.getPathToFilesDir().resolve(newPath);
 
-                    fileCrypt.save(newPath);
+                    new AddFileAsync(newPath).fork();
                 }
             }
 

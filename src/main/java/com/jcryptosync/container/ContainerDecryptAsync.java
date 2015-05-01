@@ -1,8 +1,8 @@
 package com.jcryptosync.container;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.fileCrypto.FileMetadata;
-import com.jcryptosync.fileCrypto.FileStorage;
+import com.jcryptosync.container.file.FileMetadata;
+import com.jcryptosync.container.file.FileStorage;
 import com.jcryptosync.utils.KeyUtils;
 
 import javax.crypto.Cipher;
@@ -15,12 +15,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.util.List;
+import java.util.concurrent.RecursiveAction;
 
-public class ContainerDecrypt {
+public class ContainerDecryptAsync extends RecursiveAction {
 
-    public void decrypt() {
+    Callback callback;
+
+    @Override
+    protected void compute() {
         List<FileMetadata> metadataList = FileStorage.getInstance().getMetadataList();
         metadataList.stream().forEach(f -> decryptFile(f));
+
+        callback.callback();
     }
 
     private void decryptFile(FileMetadata metadata) {
@@ -49,5 +55,13 @@ public class ContainerDecrypt {
         } catch (IOException e) {
 
         }
+    }
+
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
+    public interface Callback {
+        void callback();
     }
 }
