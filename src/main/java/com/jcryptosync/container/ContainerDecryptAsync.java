@@ -24,7 +24,7 @@ public class ContainerDecryptAsync extends RecursiveAction {
     @Override
     protected void compute() {
         List<FileMetadata> metadataList = FileStorage.getInstance().getMetadataList();
-        metadataList.stream().forEach(f -> decryptFile(f));
+        metadataList.parallelStream().forEach(f -> decryptFile(f));
 
         callback.callback();
     }

@@ -15,6 +15,7 @@ public class ContainerUtils {
     public static void linuxOpenContainer(String path) throws ContainerMountException {
         Runtime rt = Runtime.getRuntime();
         Process pr = null;
+        QuickPreferences.getPathToFilesDir();
 
         try {
             pr = rt.exec(String.format("bindfs -n %s %s", path, pathToMount));
@@ -57,8 +58,8 @@ public class ContainerUtils {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(filesDir)) {
             stream.forEach(p -> {
                 try {
-                    if(!Files.isDirectory(p))
-                    Files.delete(p);
+                    if (!Files.isDirectory(p))
+                        Files.delete(p);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

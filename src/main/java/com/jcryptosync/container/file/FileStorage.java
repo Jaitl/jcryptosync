@@ -3,12 +3,15 @@ package com.jcryptosync.container.file;
 import com.google.gson.Gson;
 import com.jcryptosync.QuickPreferences;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FileStorage {
     private static final FileStorage INSTANCE = new FileStorage();
@@ -23,22 +26,35 @@ public class FileStorage {
 
 
     public void addFileMetadata(FileMetadata fileMetadata) {
-        storage.fileMetadatas.add(fileMetadata);
+        storage.mapMetadata.put(fileMetadata.getName(), fileMetadata);
 
         saveMetadata();
     }
-    
-    public List<FileMetadata> getMetadataList() {
-        return storage.fileMetadatas;
+
+    public void deleteFileMetadata(String name) {
+        storage.mapMetadata.remove(name);
+
+        saveMetadata();
     }
 
-    private void saveMetadata() {
+    public FileMetadata getMetadata(String name) {
+        return storage.mapMetadata.get(name);
+    }
+    
+    public List<FileMetadata> getMetadataList() {
+        return new ArrayList<>(storage.mapMetadata.values());
+    }
+
+    private synchronized void saveMetadata() {
 
         Gson gson = new Gson();
         String json = gson.toJson(storage);
 
         try {
-            Files.write(QuickPreferences.getPathToContainer(), json.getBytes("UTF-8"), StandardOpenOption.CREATE);
+            if(Files.exists(QuickPreferences.getPathToContainer()))
+                Files.delete(QuickPreferences.getPathToContainer());
+            
+            Files.write(QuickPreferences.getPathToContainer(), json.getBytes("UTF-8"), StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +86,7 @@ public class FileStorage {
     }
 
     private class Storage {
-        private List<FileMetadata> fileMetadatas = new ArrayList<>();
+        private Map<String, FileMetadata> mapMetadata = new HashMap<>();
     }
 
 }

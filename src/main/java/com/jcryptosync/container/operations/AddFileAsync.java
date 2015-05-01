@@ -1,4 +1,4 @@
-package com.jcryptosync.container;
+package com.jcryptosync.container.operations;
 
 import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.container.file.FileMetadata;

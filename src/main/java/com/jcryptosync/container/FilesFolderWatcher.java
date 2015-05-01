@@ -1,6 +1,8 @@
 package com.jcryptosync.container;
 
 import com.jcryptosync.QuickPreferences;
+import com.jcryptosync.container.operations.AddFileAsync;
+import com.jcryptosync.container.operations.DeleteFileAsync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,7 @@ public class FilesFolderWatcher extends Thread {
         Path path = QuickPreferences.getPathToFilesDir();
 
         try {
-            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,10 +65,16 @@ public class FilesFolderWatcher extends Thread {
                 if (StandardWatchEventKinds.ENTRY_CREATE == kind) {
                     // A new Path was created
                     Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                    log.info("created new file: " + newPath);
+                    log.info("add file: " + newPath);
                     newPath = QuickPreferences.getPathToFilesDir().resolve(newPath);
 
                     new AddFileAsync(newPath).fork();
+
+                } else if(StandardWatchEventKinds.ENTRY_DELETE == kind) {
+                    Path newPath = ((WatchEvent<Path>) watchEvent).context();
+                    log.info("delete file: " + newPath);
+
+                    new DeleteFileAsync(newPath).fork();
                 }
             }
 
