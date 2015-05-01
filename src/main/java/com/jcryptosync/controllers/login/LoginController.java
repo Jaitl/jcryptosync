@@ -82,12 +82,12 @@ public class LoginController extends BaseLoginController {
         createButton.setText("Создать контейнер");
         enterButton.setText("Войти");
 
-        String pathKey = QuickPreferences.getPathToKey();
+        String pathKey = QuickPreferences.getPathToKey().toString();
 
         if(pathToKey != null)
             pathToKey.setText(pathKey);
 
-        String pathContainer = QuickPreferences.getPathToContainer();
+        String pathContainer = QuickPreferences.getPathToContainer().toString();
 
         if(pathContainer != null)
             pathToContainer.setText(pathContainer);

@@ -17,27 +17,13 @@ import java.security.NoSuchAlgorithmException;
 public class PrimaryKeyUtils {
 
     public static PrimaryKey generateNewPrimaryKey() {
-        KeyGenerator keyGen = null;
-
-        try {
-            keyGen = KeyGenerator.getInstance("AES");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        keyGen.init(128);
-        SecretKey secretKey = keyGen.generateKey();
+        SecretKey secretKey = KeyUtils.generateKey();
 
         return PrimaryKey.fromSecretKey(secretKey);
     }
 
     public static SecretKey generateKeyFromPassword(String password) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        MessageDigest digest = KeyUtils.createMessageDigest();
 
         byte[] hash = null;
 
@@ -51,15 +37,8 @@ public class PrimaryKeyUtils {
     }
 
     public static byte[] encryptKey(PrimaryKey primaryKey, SecretKey key) {
-        Cipher cipher = null;
+        Cipher cipher = KeyUtils.createCipher();
 
-        try {
-            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
         } catch (InvalidKeyException e) {
@@ -87,13 +66,8 @@ public class PrimaryKeyUtils {
     }
 
     public static PrimaryKey decryptKey(byte[] cryptKey, SecretKey key) throws NoCorrectPasswordException {
-        Cipher cipher = null;
+        Cipher cipher = KeyUtils.createCipher();
 
-        try {
-            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
         try {
             cipher.init(Cipher.DECRYPT_MODE, key);
         } catch (InvalidKeyException e) {

@@ -1,5 +1,6 @@
 package com.jcryptosync.controllers;
 
+import com.jcryptosync.controllers.container.ContainerController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,6 +18,9 @@ public class StageFactory {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ContainerController controller = fxmlLoader.getController();
+        controller.prepareDialog();
 
 
         Stage stage = new Stage();

@@ -9,13 +9,21 @@
     -fx-border-radius: 5;
 }
 
-.text-area {
+#errorArea {
     -fx-text-fill: red;
     -fx-text-box-border: transparent;
     -fx-control-inner-background: rgba(242, 241, 240, 0);
 }
 
-.text-area:focused {
+#errorArea:focused {
     -fx-focus-color: -fx-control-inner-background ;
     -fx-faint-focus-color: -fx-control-inner-background ;
+}
+
+#statusLabel.red {
+    -fx-text-fill: red;
+}
+
+#statusLabel.green {
+    -fx-text-fill: green;
 }

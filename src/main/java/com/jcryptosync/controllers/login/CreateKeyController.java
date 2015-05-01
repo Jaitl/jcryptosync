@@ -1,5 +1,6 @@
 package com.jcryptosync.controllers.login;
 
+import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.utils.PrimaryKeyUtils;
@@ -34,6 +35,7 @@ public class CreateKeyController extends BaseLoginController {
 
         if(key != null) {
             pathToKey.setText(key.getPath());
+            QuickPreferences.setPathToKey(key.getPath());
         }
     }
 
@@ -45,6 +47,7 @@ public class CreateKeyController extends BaseLoginController {
 
         if(container != null) {
             pathToContainer.setText(container.getPath());
+            QuickPreferences.setPathToContainer(container.getPath());
         }
     }
 
