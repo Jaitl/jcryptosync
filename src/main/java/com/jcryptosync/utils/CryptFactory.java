@@ -6,8 +6,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
-public class KeyUtils {
+public class CryptFactory {
     public static SecretKey generateKey() {
         KeyGenerator keyGen = null;
 
@@ -23,11 +24,20 @@ public class KeyUtils {
         return secretKey;
     }
 
+    public static byte[] generateRandomIV() {
+        byte[] ivBytes = new byte[16];
+
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(ivBytes);
+
+        return ivBytes;
+    }
+
     public static Cipher createCipher() {
         Cipher cipher = null;
 
         try {
-            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher = Cipher.getInstance("AES/CFB/PKCS5Padding");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {

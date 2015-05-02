@@ -4,8 +4,17 @@ public class FileMetadata {
     private String id;
     private String name;
     private byte[] hash;
-
     private byte[] key;
+
+    public byte[] getIv() {
+        return iv;
+    }
+
+    public void setIv(byte[] iv) {
+        this.iv = iv;
+    }
+
+    private byte[] iv;
 
     public byte[] getKey() {
         return key;

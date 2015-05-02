@@ -53,7 +53,7 @@ public class FileStorage {
         try {
             if(Files.exists(QuickPreferences.getPathToContainer()))
                 Files.delete(QuickPreferences.getPathToContainer());
-            
+
             Files.write(QuickPreferences.getPathToContainer(), json.getBytes("UTF-8"), StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
             e.printStackTrace();

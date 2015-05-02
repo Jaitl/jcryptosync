@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import javax.crypto.SecretKey;
 
-public class PrimaryKeyUtilsTest {
+public class PrimaryCryptFactoryTest {
 
     @Test
     public void testCreateKey() {

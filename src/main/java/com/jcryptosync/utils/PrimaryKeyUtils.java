@@ -19,13 +19,13 @@ import java.security.MessageDigest;
 public class PrimaryKeyUtils {
 
     public static PrimaryKey generateNewPrimaryKey() {
-        SecretKey secretKey = KeyUtils.generateKey();
+        SecretKey secretKey = CryptFactory.generateKey();
 
         return PrimaryKey.fromSecretKey(secretKey);
     }
 
     public static SecretKey generateKeyFromPassword(String password) {
-        MessageDigest digest = KeyUtils.createMessageDigest();
+        MessageDigest digest = CryptFactory.createMessageDigest();
 
         byte[] hash = null;
 
@@ -39,7 +39,7 @@ public class PrimaryKeyUtils {
     }
 
     public static byte[] encryptKey(PrimaryKey primaryKey, SecretKey key) {
-        Cipher cipher = KeyUtils.createCipher();
+        Cipher cipher = CryptFactory.createCipher();
 
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -68,7 +68,7 @@ public class PrimaryKeyUtils {
     }
 
     public static PrimaryKey decryptKey(byte[] cryptKey, SecretKey key) throws NoCorrectPasswordException {
-        Cipher cipher = KeyUtils.createCipher();
+        Cipher cipher = CryptFactory.createCipher();
 
         try {
             cipher.init(Cipher.DECRYPT_MODE, key);
