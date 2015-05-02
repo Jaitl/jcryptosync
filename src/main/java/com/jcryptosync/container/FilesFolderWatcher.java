@@ -1,13 +1,13 @@
 package com.jcryptosync.container;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.container.operations.AddFileAsync;
-import com.jcryptosync.container.operations.DeleteFileAsync;
+import com.jcryptosync.container.file.FileOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
 
 public class FilesFolderWatcher extends Thread {
 
@@ -40,7 +40,10 @@ public class FilesFolderWatcher extends Thread {
         Path path = QuickPreferences.getPathToFilesDir();
 
         try {
-            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
+            path.register(watchService,
+                    StandardWatchEventKinds.ENTRY_CREATE,
+                    StandardWatchEventKinds.ENTRY_DELETE,
+                    StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,29 +59,41 @@ public class FilesFolderWatcher extends Thread {
                 log.error("error", e);
             }
 
+            List<WatchEvent<?>> list = key.pollEvents();
+
+            key.reset();
+
 
             // Dequeueing events
             WatchEvent.Kind<?> kind = null;
-            for (WatchEvent<?> watchEvent : key.pollEvents()) {
+            for (WatchEvent<?> watchEvent : list) {
                 // Get the type of the event
                 kind = watchEvent.kind();
+
+                Path eventPath = ((WatchEvent<Path>) watchEvent).context();
+
+                if(eventPath.getFileName().toString().contains(".goutputstream"))
+                    continue;
+
                 if (StandardWatchEventKinds.ENTRY_CREATE == kind) {
                     // A new Path was created
-                    Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                    log.info("add file: " + newPath);
-                    newPath = QuickPreferences.getPathToFilesDir().resolve(newPath);
 
-                    new AddFileAsync(newPath).fork();
+                    log.info("request to add file: " + eventPath);
+                    eventPath = QuickPreferences.getPathToFilesDir().resolve(eventPath);
+
+                    FileOperations.addNewFile(eventPath);
 
                 } else if(StandardWatchEventKinds.ENTRY_DELETE == kind) {
-                    Path newPath = ((WatchEvent<Path>) watchEvent).context();
-                    log.info("delete file: " + newPath);
+                    log.info("request to delete file: " + eventPath);
 
-                    new DeleteFileAsync(newPath).fork();
+                    FileOperations.deleteFile(eventPath);
+                } else if(StandardWatchEventKinds.ENTRY_MODIFY == kind) {
+                    eventPath = QuickPreferences.getPathToFilesDir().resolve(eventPath);
+                    log.info("request to modificate file: " + eventPath);
+
+                    FileOperations.modificateFile(eventPath);
                 }
             }
-
-            key.reset();
         }
 
         log.info("stop watch Files folder");

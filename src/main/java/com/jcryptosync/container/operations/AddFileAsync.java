@@ -9,11 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -40,8 +38,8 @@ public class AddFileAsync extends RecursiveAction {
     @Override
     protected void compute() {
         try {
-            log.info("wait 5 second");
-            Thread.sleep(5000);
+            log.info("wait 2 second");
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -65,10 +63,11 @@ public class AddFileAsync extends RecursiveAction {
         saveCryptFile(newFile, key, ivByte, pathToFile);
 
         fileStorage.addFileMetadata(fileMetadata);
+
         log.info("added new file: " + fileMetadata.getName());
     }
 
-    private byte[] compareHash(Path path) {
+    public static byte[] compareHash(Path path) {
         MessageDigest messageDigest = CryptFactory.createMessageDigest();
 
         try(SeekableByteChannel channel = Files.newByteChannel(path)) {
@@ -87,7 +86,7 @@ public class AddFileAsync extends RecursiveAction {
     }
 
 
-    private void saveCryptFile(Path path, SecretKey key, byte[] iv, Path pathToCryptFile) {
+    public static void saveCryptFile(Path path, SecretKey key, byte[] iv, Path pathToCryptFile) {
         Cipher cipher = CryptFactory.createCipher();
 
         IvParameterSpec ivSpec = new IvParameterSpec(iv);

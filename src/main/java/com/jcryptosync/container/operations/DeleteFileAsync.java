@@ -27,15 +27,20 @@ public class DeleteFileAsync extends RecursiveAction {
     protected void compute() {
         FileMetadata metadata = fileStorage.getMetadata(deleteFile.getFileName().toString());
 
+        deleteFile(metadata);
+
+        fileStorage.deleteFileMetadata(metadata.getName());
+        log.info("deleted file: " + metadata.getName());
+    }
+
+    public static void deleteFile(FileMetadata metadata) {
         Path pathToCryptFile = QuickPreferences.getPathToCryptDir();
         pathToCryptFile = pathToCryptFile.resolve(metadata.getId());
 
         try {
             Files.delete(pathToCryptFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("delete error", e);
         }
-
-        fileStorage.deleteFileMetadata(metadata.getName());
     }
 }

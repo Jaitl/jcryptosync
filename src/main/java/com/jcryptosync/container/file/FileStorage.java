@@ -3,7 +3,6 @@ package com.jcryptosync.container.file;
 import com.google.gson.Gson;
 import com.jcryptosync.QuickPreferences;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -33,6 +32,13 @@ public class FileStorage {
 
     public void deleteFileMetadata(String name) {
         storage.mapMetadata.remove(name);
+
+        saveMetadata();
+    }
+
+    public void updateFileMetadata(FileMetadata metadata) {
+        storage.mapMetadata.remove(metadata.getName());
+        storage.mapMetadata.put(metadata.getName(), metadata);
 
         saveMetadata();
     }
