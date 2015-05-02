@@ -4,7 +4,7 @@ import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.controllers.StageFactory;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
-import com.jcryptosync.utils.PrimaryKeyUtils;
+import com.jcryptosync.primarykey.PrimaryKeyManager;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class LoginController extends BaseLoginController {
@@ -30,7 +32,14 @@ public class LoginController extends BaseLoginController {
     protected void selectKeyAction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения ключа");
-        File key = key = fileChooser.showOpenDialog(null);
+
+        Path initDir = QuickPreferences.getPathToKey().getParent();
+
+        if(Files.exists(initDir)) {
+            fileChooser.setInitialDirectory(initDir.toFile());
+        }
+
+        File key = fileChooser.showOpenDialog(null);
 
         if(key != null) {
             pathToKey.setText(key.getPath());
@@ -42,7 +51,19 @@ public class LoginController extends BaseLoginController {
     protected void selectContainerAction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения контейнера");
-        File container = fileChooser.showOpenDialog(null);
+
+        Path initDir = QuickPreferences.getPathToContainer().getParent();
+
+        if(Files.exists(initDir)) {
+            fileChooser.setInitialDirectory(initDir.toFile());
+        }
+
+        File container;
+
+        if(isNewContainer.isSelected())
+            container = fileChooser.showSaveDialog(null);
+        else
+            container = fileChooser.showOpenDialog(null);
 
         if(container != null) {
             pathToContainer.setText(container.getPath());
@@ -56,11 +77,16 @@ public class LoginController extends BaseLoginController {
 
         if(checkFields()) {
             try {
-                boolean passIsCorrect = PrimaryKeyUtils.checkPassword(firstPassword.getText(), Paths.get(pathToKey.getText()));
+
+                PrimaryKeyManager keyManager = new PrimaryKeyManager();
+                boolean passIsCorrect = keyManager.checkPassword(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
                 if(passIsCorrect) {
                     Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
                     stage.show();
+
+                    QuickPreferences.setPathToContainer(pathToContainer.getText());
+                    QuickPreferences.setPathToKey(pathToKey.getText());
 
                     ((Node)(event.getSource())).getScene().getWindow().hide();
                 }

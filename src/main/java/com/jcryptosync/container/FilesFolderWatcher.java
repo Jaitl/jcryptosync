@@ -91,7 +91,7 @@ public class FilesFolderWatcher extends Thread {
                     eventPath = QuickPreferences.getPathToFilesDir().resolve(eventPath);
                     log.info("request to modificate file: " + eventPath);
 
-                    FileOperations.modificateFile(eventPath);
+                    //FileOperations.modificateFile(eventPath);
                 }
             }
         }

@@ -27,6 +27,8 @@ public abstract class BaseLoginController {
     private TextArea errorArea;
     @FXML
     private Label errorTitleLabel;
+    @FXML
+    protected CheckBox isNewContainer;
 
     @FXML
     protected abstract void changeControllerAction(ActionEvent event);

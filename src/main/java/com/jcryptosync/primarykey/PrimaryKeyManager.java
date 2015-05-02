@@ -1,30 +1,34 @@
-package com.jcryptosync.utils;
+package com.jcryptosync.primarykey;
 
-import com.jcryptosync.PrimaryKey;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
+import com.jcryptosync.utils.CryptFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 
-public class PrimaryKeyUtils {
+public class PrimaryKeyManager {
 
-    public static PrimaryKey generateNewPrimaryKey() {
+    private static String iv = "jCryptoSync12345";
+
+    public PrimaryKey generateNewPrimaryKey() {
         SecretKey secretKey = CryptFactory.generateKey();
 
         return PrimaryKey.fromSecretKey(secretKey);
     }
 
-    public static SecretKey generateKeyFromPassword(String password) {
+    public SecretKey generateKeyFromPassword(String password) {
         MessageDigest digest = CryptFactory.createMessageDigest();
 
         byte[] hash = null;
@@ -38,12 +42,16 @@ public class PrimaryKeyUtils {
         return new SecretKeySpec(hash, 0, 16, "AES");
     }
 
-    public static byte[] encryptKey(PrimaryKey primaryKey, SecretKey key) {
+    public byte[] encryptKey(PrimaryKey primaryKey, SecretKey key) {
         Cipher cipher = CryptFactory.createCipher();
 
+        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
+
         try {
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
         } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
 
@@ -67,12 +75,16 @@ public class PrimaryKeyUtils {
         return cipherKey;
     }
 
-    public static PrimaryKey decryptKey(byte[] cryptKey, SecretKey key) throws NoCorrectPasswordException {
+    public PrimaryKey decryptKey(byte[] cryptKey, SecretKey key) throws NoCorrectPasswordException {
         Cipher cipher = CryptFactory.createCipher();
 
+        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
+
         try {
-            cipher.init(Cipher.DECRYPT_MODE, key);
+            cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
         } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
 
@@ -96,28 +108,28 @@ public class PrimaryKeyUtils {
         return PrimaryKey.fromJson(jsonKey);
     }
 
-    public static void saveNewCryptKeyToFile(String password, Path pathToKey) throws IOException {
-        PrimaryKey primaryKey = PrimaryKeyUtils.generateNewPrimaryKey();
-        SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
-        byte[] cryptKey = PrimaryKeyUtils.encryptKey(primaryKey, passKey);
+    public void saveNewCryptKeyToFile(String password, Path pathToKey) throws IOException {
+        PrimaryKey primaryKey = generateNewPrimaryKey();
+        SecretKey passKey = generateKeyFromPassword(password);
+        byte[] cryptKey = encryptKey(primaryKey, passKey);
 
         Files.write(pathToKey, cryptKey, StandardOpenOption.CREATE_NEW);
     }
 
-    public static PrimaryKey loadPrimaryKeyFromFile(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
+    public PrimaryKey loadPrimaryKeyFromFile(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
         byte[] cryptKey;
 
         cryptKey = Files.readAllBytes(pathToKey);
 
 
-        SecretKey passKey = PrimaryKeyUtils.generateKeyFromPassword(password);
+        SecretKey passKey = generateKeyFromPassword(password);
 
-        return PrimaryKeyUtils.decryptKey(cryptKey, passKey);
+        return decryptKey(cryptKey, passKey);
     }
 
-    public static boolean checkPassword(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
+    public boolean checkPassword(String password, Path pathToKey) throws IOException, NoCorrectPasswordException {
         PrimaryKey key = loadPrimaryKeyFromFile(password, pathToKey);
 
-        return key.getType().contains("AES");
+        return key.getKey() != null;
     }
 }

@@ -1,4 +1,4 @@
-package com.jcryptosync;
+package com.jcryptosync.primarykey;
 
 import com.google.gson.Gson;
 
@@ -6,17 +6,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class PrimaryKey {
-    private String type = "AES-128";
 
     private byte[] key;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public byte[] getKey() {
         return key;

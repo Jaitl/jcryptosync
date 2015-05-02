@@ -56,6 +56,11 @@
                         <Button mnemonicParsing="false" onAction="#selectContainerAction" text="Выбрать" />
                      </children>
                   </HBox>
+                  <CheckBox mnemonicParsing="false" text="Новый файл контейнера" fx:id="isNewContainer">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </CheckBox>
                </children>
                <VBox.margin>
                   <Insets top="5.0" />

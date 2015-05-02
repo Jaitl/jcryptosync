@@ -3,7 +3,7 @@ package com.jcryptosync.controllers.login;
 import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.controllers.StageFactory;
-import com.jcryptosync.utils.PrimaryKeyUtils;
+import com.jcryptosync.primarykey.PrimaryKeyManager;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CreateKeyController extends BaseLoginController {
@@ -31,6 +33,13 @@ public class CreateKeyController extends BaseLoginController {
     protected void selectKeyAction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения ключа");
+
+        Path initDir = QuickPreferences.getPathToKey().getParent();
+
+        if(Files.exists(initDir)) {
+            fileChooser.setInitialDirectory(initDir.toFile());
+        }
+
         File key = fileChooser.showSaveDialog(null);
 
         if(key != null) {
@@ -43,6 +52,13 @@ public class CreateKeyController extends BaseLoginController {
     protected void selectContainerAction() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения контейнера");
+
+        Path initDir = QuickPreferences.getPathToContainer().getParent();
+
+        if(Files.exists(initDir)) {
+            fileChooser.setInitialDirectory(initDir.toFile());
+        }
+
         File container = fileChooser.showSaveDialog(null);
 
         if(container != null) {
@@ -57,12 +73,16 @@ public class CreateKeyController extends BaseLoginController {
 
         if(checkFields()) {
             try {
-                PrimaryKeyUtils.saveNewCryptKeyToFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
+                PrimaryKeyManager keyManager = new PrimaryKeyManager();
+                keyManager.saveNewCryptKeyToFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
                 Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
                 stage.show();
 
-                ((Node)(event.getSource())).getScene().getWindow().hide();
+                QuickPreferences.setPathToContainer(pathToContainer.getText());
+                QuickPreferences.setPathToKey(pathToKey.getText());
+
+                        ((Node) (event.getSource())).getScene().getWindow().hide();
 
             } catch (IOException e) {
                 setError("Ошибка при сохранении ключа", pathToKey);
@@ -88,6 +108,9 @@ public class CreateKeyController extends BaseLoginController {
     @Override
     public void prepareDialog() {
         super.prepareDialog();
+
+        isNewContainer.setManaged(false);
+        isNewContainer.setVisible(false);
 
         showSecondPassword();
         createButton.setText("Отменить");
