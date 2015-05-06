@@ -1,20 +1,20 @@
 package com.jcryptosync.controllers.container;
 
 import com.jcryptosync.container.ContainerManager;
-import com.jcryptosync.exceptoins.ContainerMountException;
+import com.jcryptosync.container.exceptoins.ContainerMountException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ContainerController {
     protected static Logger log = LoggerFactory.getLogger(ContainerController.class);
-
-    @FXML
+   @FXML
     private PasswordField passwordField;
     @FXML
     private Label passwordLabel;
@@ -62,9 +62,13 @@ public class ContainerController {
         }
     }
 
-    public void prepareDialog() {
+    public void prepareDialog(Stage stage) {
         clearError();
         statusDisabled();
+        containerManager.startJetty();
+
+        stage.setOnCloseRequest(e -> containerManager.stopJetty());
+        stage.setOnHiding(e -> containerManager.stopJetty());
     }
 
     private boolean enableContainer() {
@@ -75,8 +79,6 @@ public class ContainerController {
             setError(e.getMessage());
             return false;
         }
-
-        containerManager.startFileWatcher();
 
         return true;
     }
@@ -89,8 +91,6 @@ public class ContainerController {
             setError(e.getMessage());
             return false;
         }
-
-        containerManager.stopFileWatcher();
 
         return true;
     }

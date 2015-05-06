@@ -1,8 +1,7 @@
 package com.jcryptosync.container.operations;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.container.file.FileMetadata;
-import com.jcryptosync.container.file.FileStorage;
+import com.jcryptosync.container.domain.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,31 +10,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.RecursiveAction;
 
-public class DeleteFileAsync extends RecursiveAction {
+public class DeleteFileAsync  {
 
     protected static Logger log = LoggerFactory.getLogger(DeleteFileAsync.class);
 
-    private static FileStorage fileStorage = FileStorage.getInstance();
+     File file;
 
-    Path deleteFile;
-
-    public DeleteFileAsync(Path deleteFile) {
-        this.deleteFile = deleteFile;
+    public DeleteFileAsync(File file) {
+        this.file = file;
     }
 
-    @Override
-    protected void compute() {
-        FileMetadata metadata = fileStorage.getMetadata(deleteFile.getFileName().toString());
+    public void compute() {
+        deleteFile(file);
 
-        deleteFile(metadata);
-
-        fileStorage.deleteFileMetadata(metadata.getName());
-        log.info("deleted file: " + metadata.getName());
+        log.info("deleted file: " + file.getName());
     }
 
-    public static void deleteFile(FileMetadata metadata) {
+    public static void deleteFile(File metadata) {
         Path pathToCryptFile = QuickPreferences.getPathToCryptDir();
-        pathToCryptFile = pathToCryptFile.resolve(metadata.getId());
+        pathToCryptFile = pathToCryptFile.resolve(metadata.getFileId());
 
         try {
             Files.delete(pathToCryptFile);

@@ -1,8 +1,8 @@
 package com.jcryptosync;
 
-import com.jcryptosync.exceptoins.NoCorrectPasswordException;
-import com.jcryptosync.primarykey.PrimaryKey;
-import com.jcryptosync.primarykey.PrimaryKeyManager;
+import com.jcryptosync.container.exceptoins.NoCorrectPasswordException;
+import com.jcryptosync.container.primarykey.PrimaryKey;
+import com.jcryptosync.container.primarykey.PrimaryKeyManager;
 import org.junit.Assert;
 import org.junit.Test;
 

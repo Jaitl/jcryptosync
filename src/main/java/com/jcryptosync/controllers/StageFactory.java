@@ -20,8 +20,6 @@ public class StageFactory {
         }
 
         ContainerController controller = fxmlLoader.getController();
-        controller.prepareDialog();
-
 
         Stage stage = new Stage();
         stage.setTitle("Управление контейнером");
@@ -30,6 +28,8 @@ public class StageFactory {
         scene.getStylesheets().add("styles/main.css");
 
         stage.setScene(scene);
+
+        controller.prepareDialog(stage);
 
         return stage;
     }

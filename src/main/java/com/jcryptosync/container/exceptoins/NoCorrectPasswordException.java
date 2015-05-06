@@ -1,4 +1,4 @@
-package com.jcryptosync.exceptoins;
+package com.jcryptosync.container.exceptoins;
 
 public class NoCorrectPasswordException extends Exception {
     public NoCorrectPasswordException(String message) {

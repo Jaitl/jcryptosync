@@ -1,9 +1,10 @@
-package com.jcryptosync.container;
+package com.jcryptosync.container.operations;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.container.file.FileMetadata;
-import com.jcryptosync.container.file.FileStorage;
-import com.jcryptosync.utils.CryptFactory;
+import com.jcryptosync.container.domain.File;
+import com.jcryptosync.container.utils.CryptFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -13,31 +14,34 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.util.List;
-import java.util.concurrent.RecursiveAction;
 
-public class ContainerDecryptAsync extends RecursiveAction {
+public class GetFileAsync {
+    protected static Logger log = LoggerFactory.getLogger(GetFileAsync.class);
 
-    Callback callback;
+    File file;
+    OutputStream os;
 
-    @Override
-    protected void compute() {
-        List<FileMetadata> metadataList = FileStorage.getInstance().getMetadataList();
-        metadataList.parallelStream().forEach(f -> decryptFile(f));
-
-        callback.callback();
+    public GetFileAsync(File file, OutputStream os) {
+        this.file = file;
+        this.os = os;
     }
 
-    private void decryptFile(FileMetadata metadata) {
-        Path decryptFile = QuickPreferences.getPathToFilesDir();
-        decryptFile = decryptFile.resolve(metadata.getName());
+    public void compute() {
+
+        decryptFile(file);
+
+        log.info("file decrypted:" + file.getName());
+    }
+
+    private void decryptFile(File metadata) {
 
         Path enctyptFile = QuickPreferences.getPathToCryptDir();
-        enctyptFile = enctyptFile.resolve(metadata.getId());
+        enctyptFile = enctyptFile.resolve(metadata.getFileId());
 
         Cipher cipher = CryptFactory.createCipher();
 
@@ -57,7 +61,7 @@ public class ContainerDecryptAsync extends RecursiveAction {
             e.printStackTrace();
         }
 
-        try(CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(decryptFile.toFile()), cipher)) {;
+        try(CipherOutputStream cos = new CipherOutputStream(os, cipher)) {
 
             Files.copy(enctyptFile, cos);
 
@@ -66,13 +70,5 @@ public class ContainerDecryptAsync extends RecursiveAction {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setCallback(Callback callback) {
-        this.callback = callback;
-    }
-
-    public interface Callback {
-        void callback();
     }
 }

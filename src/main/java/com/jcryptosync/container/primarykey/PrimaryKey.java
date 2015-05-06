@@ -1,4 +1,4 @@
-package com.jcryptosync.primarykey;
+package com.jcryptosync.container.primarykey;
 
 import com.google.gson.Gson;
 

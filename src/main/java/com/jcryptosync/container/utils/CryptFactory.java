@@ -1,4 +1,4 @@
-package com.jcryptosync.utils;
+package com.jcryptosync.container.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

@@ -1,7 +1,7 @@
-package com.jcryptosync.primarykey;
+package com.jcryptosync.container.primarykey;
 
-import com.jcryptosync.exceptoins.NoCorrectPasswordException;
-import com.jcryptosync.utils.CryptFactory;
+import com.jcryptosync.container.exceptoins.NoCorrectPasswordException;
+import com.jcryptosync.container.utils.CryptFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

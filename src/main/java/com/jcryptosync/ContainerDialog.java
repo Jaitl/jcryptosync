@@ -9,6 +9,8 @@ public class ContainerDialog extends Application {
     public void start(Stage primaryStage) throws Exception {
         Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
 
+        primaryStage.onCloseRequestProperty().bindBidirectional(stage.onCloseRequestProperty());
+        primaryStage.onHidingProperty().bindBidirectional(stage.onHidingProperty());
 
         primaryStage.setTitle("Управление контейнером");
         primaryStage.setScene(stage.getScene());

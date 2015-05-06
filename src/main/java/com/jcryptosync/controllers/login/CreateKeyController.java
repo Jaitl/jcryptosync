@@ -1,9 +1,9 @@
 package com.jcryptosync.controllers.login;
 
 import com.jcryptosync.QuickPreferences;
+import com.jcryptosync.container.primarykey.PrimaryKeyManager;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.controllers.StageFactory;
-import com.jcryptosync.primarykey.PrimaryKeyManager;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;

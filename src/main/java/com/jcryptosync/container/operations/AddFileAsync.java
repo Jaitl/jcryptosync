@@ -1,9 +1,8 @@
 package com.jcryptosync.container.operations;
 
 import com.jcryptosync.QuickPreferences;
-import com.jcryptosync.container.file.FileMetadata;
-import com.jcryptosync.container.file.FileStorage;
-import com.jcryptosync.utils.CryptFactory;
+import com.jcryptosync.container.domain.File;
+import com.jcryptosync.container.utils.CryptFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,82 +10,62 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
-import java.util.UUID;
-import java.util.concurrent.RecursiveAction;
 
-public class AddFileAsync extends RecursiveAction {
+public class AddFileAsync {
 
     protected static Logger log = LoggerFactory.getLogger(AddFileAsync.class);
 
-    private static FileStorage fileStorage = FileStorage.getInstance();
+    private File file;
+    private InputStream is;
 
-    private Path newFile;
-
-    public AddFileAsync(Path newFile) {
-        this.newFile = newFile;
+    public AddFileAsync(File file, InputStream is) {
+        this.file = file;
+        this.is = is;
     }
 
-    @Override
-    protected void compute() {
-        try {
-            log.info("wait 2 second");
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        FileMetadata fileMetadata = new FileMetadata();
-        fileMetadata.setHash(compareHash(newFile));
-
-        String id = UUID.randomUUID().toString();
-        fileMetadata.setId(id);
-
-        fileMetadata.setName(newFile.getFileName().toString());
-
+    public void compute() {
         SecretKey key = CryptFactory.generateKey();
 
-        fileMetadata.setKey(key.getEncoded());
+        file.setKey(key.getEncoded());
 
         byte[] ivByte = CryptFactory.generateRandomIV();
-        fileMetadata.setIv(ivByte);
+        file.setIv(ivByte);
 
-        Path pathToFile = QuickPreferences.getPathToCryptDir().resolve(id);
+        Path pathToFile = QuickPreferences.getPathToCryptDir().resolve(file.getFileId());
 
-        saveCryptFile(newFile, key, ivByte, pathToFile);
+        saveCryptFile(is, key, ivByte, pathToFile);
 
-        fileStorage.addFileMetadata(fileMetadata);
+        //fileStorage.addFileMetadata(fileMetadata);
 
-        log.info("added new file: " + fileMetadata.getName());
+        log.info("crypt file: " + file.getName());
     }
 
-    public static byte[] compareHash(Path path) {
+    public static byte[] compareHash(InputStream is) {
         MessageDigest messageDigest = CryptFactory.createMessageDigest();
 
-        try(SeekableByteChannel channel = Files.newByteChannel(path)) {
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
 
-            while (channel.read(buffer) > 0) {
-                buffer.rewind();
-                messageDigest.update(buffer);
-                buffer.flip();
+        byte[] arr = new byte[1024];
+        try {
+            while ((is.read(arr)) != -1) {
+                messageDigest.update(arr);
+                arr = new byte[1024];
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("hash error", e);
         }
 
         return messageDigest.digest();
     }
 
 
-    public static void saveCryptFile(Path path, SecretKey key, byte[] iv, Path pathToCryptFile) {
+    public static void saveCryptFile(InputStream outIs, SecretKey key, byte[] iv, Path pathToCryptFile) {
         Cipher cipher = CryptFactory.createCipher();
 
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
@@ -99,7 +78,7 @@ public class AddFileAsync extends RecursiveAction {
             e.printStackTrace();
         }
 
-        try(CipherInputStream is = new CipherInputStream(new FileInputStream(path.toFile()), cipher)) {
+        try(CipherInputStream is = new CipherInputStream(outIs, cipher)) {
 
             Files.copy(is, pathToCryptFile);
 
