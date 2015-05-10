@@ -21,6 +21,9 @@ public abstract class ContainerManager {
 
     public abstract void openContainer() throws ContainerMountException;
     public abstract void closeContainer() throws ContainerMountException;
+    public abstract void mountContainer() throws ContainerMountException;
+    public abstract void unmountContainer() throws ContainerMountException;
+    public abstract boolean isMount();
 
     public static ContainerManager createManager() {
         String OS = System.getProperty("os.name").toLowerCase();

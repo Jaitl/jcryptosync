@@ -1,6 +1,8 @@
 package com.jcryptosync.container;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.File;
@@ -13,6 +15,7 @@ public class Jetty {
     public Jetty() {
 
         server = new Server(8080);
+        server.setStopAtShutdown(true);
         WebAppContext root = new WebAppContext();
 
         root.setContextPath("/");
