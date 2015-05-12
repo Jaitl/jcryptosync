@@ -36,8 +36,10 @@ public class CreateKeyController extends BaseLoginController {
 
         Path initDir = QuickPreferences.getPathToKey().getParent();
 
-        if(Files.exists(initDir)) {
-            fileChooser.setInitialDirectory(initDir.toFile());
+        if(initDir != null) {
+            if (Files.exists(initDir)) {
+                fileChooser.setInitialDirectory(initDir.toFile());
+            }
         }
 
         File key = fileChooser.showSaveDialog(null);
@@ -55,8 +57,10 @@ public class CreateKeyController extends BaseLoginController {
 
         Path initDir = QuickPreferences.getPathToContainer().getParent();
 
-        if(Files.exists(initDir)) {
-            fileChooser.setInitialDirectory(initDir.toFile());
+        if(initDir != null) {
+            if (Files.exists(initDir)) {
+                fileChooser.setInitialDirectory(initDir.toFile());
+            }
         }
 
         File container = fileChooser.showSaveDialog(null);
@@ -76,7 +80,7 @@ public class CreateKeyController extends BaseLoginController {
                 PrimaryKeyManager keyManager = new PrimaryKeyManager();
                 keyManager.saveNewCryptKeyToFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
-                Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
+                Stage stage = StageFactory.createContainerStage(keyManager.getClass().getClassLoader());
                 stage.show();
 
                 QuickPreferences.setPathToContainer(pathToContainer.getText());

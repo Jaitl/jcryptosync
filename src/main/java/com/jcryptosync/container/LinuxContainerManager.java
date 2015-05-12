@@ -10,32 +10,15 @@ import java.nio.file.Paths;
 public class LinuxContainerManager extends ContainerManager {
 
     private String nameMountFolder = "cryptFiles";
-    private String pathToWebDavServer;
+
     private Path pathToMountFolder;
-    private final String user = "usera";
-    private final String password = "password";
+
 
     public LinuxContainerManager() {
         pathToWebDavServer = "http://localhost:8080/webdav";
 
         Path home = Paths.get(System.getProperty("user.home"));
         pathToMountFolder = home.resolve(nameMountFolder);
-    }
-
-    @Override
-    public void openContainer() throws ContainerMountException {
-        log.info("open container");
-
-        if(!isMount())
-            mountContainer();
-    }
-
-    @Override
-    public void closeContainer() throws ContainerMountException {
-        log.info("close container");
-
-        if(isMount())
-            unmountContainer();
     }
 
     @Override

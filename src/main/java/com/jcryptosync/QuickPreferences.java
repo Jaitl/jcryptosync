@@ -16,7 +16,7 @@ public class QuickPreferences {
     }
 
     public static Path getPathToKey() {
-        return Paths.get(preferences.get(PATH_TO_KEY, null));
+        return Paths.get(preferences.get(PATH_TO_KEY, ""));
     }
 
     public static void setPathToContainer(String path) {
@@ -24,7 +24,7 @@ public class QuickPreferences {
     }
 
     public static Path getPathToContainer() {
-        return Paths.get(preferences.get(PATH_TO_CONTAINER, null));
+        return Paths.get(preferences.get(PATH_TO_CONTAINER, ""));
     }
 
     private static Path getPathToDir(String dir) {

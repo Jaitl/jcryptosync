@@ -35,8 +35,10 @@ public class LoginController extends BaseLoginController {
 
         Path initDir = QuickPreferences.getPathToKey().getParent();
 
-        if(Files.exists(initDir)) {
-            fileChooser.setInitialDirectory(initDir.toFile());
+        if(initDir != null) {
+            if (Files.exists(initDir)) {
+                fileChooser.setInitialDirectory(initDir.toFile());
+            }
         }
 
         File key = fileChooser.showOpenDialog(null);
@@ -54,8 +56,10 @@ public class LoginController extends BaseLoginController {
 
         Path initDir = QuickPreferences.getPathToContainer().getParent();
 
-        if(Files.exists(initDir)) {
-            fileChooser.setInitialDirectory(initDir.toFile());
+        if(initDir != null) {
+            if (Files.exists(initDir)) {
+                fileChooser.setInitialDirectory(initDir.toFile());
+            }
         }
 
         File container;
