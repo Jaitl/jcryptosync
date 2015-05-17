@@ -3,6 +3,7 @@ package com.jcryptosync.container;
 import com.jcryptosync.QuickPreferences;
 import com.jcryptosync.container.utils.CryptFactory;
 import com.jcryptosync.container.webdav.CryptFile;
+import io.milton.common.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 
@@ -48,6 +50,13 @@ public class FileOperations {
         Path enctyptFile = QuickPreferences.getPathToCryptDir();
         enctyptFile = enctyptFile.resolve(file.getUniqueId());
 
+        InputStream is = null;
+        try {
+            is = Files.newInputStream(enctyptFile, StandardOpenOption.READ);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Cipher cipher = CryptFactory.createCipher();
 
         byte[] key = file.getKey();
@@ -65,7 +74,8 @@ public class FileOperations {
         }
 
         try(CipherOutputStream cos = new CipherOutputStream(os, cipher)) {
-            Files.copy(enctyptFile, cos);
+            StreamUtils.readTo(is, cos);
+
         } catch (IOException e) {
             log.error("decrypt error", e);
         }
@@ -85,6 +95,13 @@ public class FileOperations {
     private void saveCryptFile(InputStream outIs, SecretKey key, byte[] iv, Path pathToCryptFile) {
         Cipher cipher = CryptFactory.createCipher();
 
+        OutputStream os = null;
+        try {
+            os = Files.newOutputStream(pathToCryptFile, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
 
         try {
@@ -95,7 +112,7 @@ public class FileOperations {
 
         try(CipherInputStream is = new CipherInputStream(outIs, cipher)) {
 
-            Files.copy(is, pathToCryptFile);
+            StreamUtils.readTo(is, os);
 
         } catch (IOException e) {
             log.error("crypt error", e);

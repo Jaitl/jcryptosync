@@ -134,7 +134,7 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
 
     @Override
     public boolean isDigestAllowed() {
-        return false;
+        return true;
     }
 
     @Override

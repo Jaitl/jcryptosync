@@ -18,6 +18,11 @@
         </init-param>
 
         <init-param>
+            <param-name>milton.configurator</param-name>
+            <param-value>com.jcryptosync.container.webdav.MyMiltonConfigurator</param-value>
+        </init-param>
+
+        <init-param>
             <param-name>enableExpectContinue</param-name>
             <param-value>false</param-value>
         </init-param>
