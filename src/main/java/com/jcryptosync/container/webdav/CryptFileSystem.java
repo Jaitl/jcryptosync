@@ -39,8 +39,8 @@ public class CryptFileSystem {
     public void createNewFile(CryptFile cryptFile, InputStream is) {
         fileMetadata.put(cryptFile.getUniqueId(), cryptFile);
 
-        FileOperations fileOperations = new FileOperations(cryptFile);
-        fileOperations.addFile(is);
+        FileOperations.cryptFile(cryptFile, is);
+
 
         db.save();
         log.debug("added new file: " + cryptFile.getName());
@@ -54,36 +54,40 @@ public class CryptFileSystem {
     }
 
     public void getFileContent(CryptFile cryptFile, OutputStream os) {
-        FileOperations fileOperations = new FileOperations(cryptFile);
-        fileOperations.getFile(os);
+
+        FileOperations.decryptFile(cryptFile, os);
 
         log.debug("get file content: " + cryptFile.getName());
     }
 
     public void updateFile(CryptFile cryptFile, InputStream is) {
+        FileOperations.updateFile(cryptFile, is);
 
+        log.debug("file updated: " + cryptFile.getName());
     }
 
     public void deleteFolder(Folder folder) {
         fileMetadata.remove(folder.getUniqueId());
-
         db.save();
+
+        log.debug("folder deleted: " + folder.getName());
     }
 
     public void deleteFile(CryptFile cryptFile) {
         fileMetadata.remove(cryptFile.getUniqueId());
 
-        FileOperations fileOperations = new FileOperations(cryptFile);
-        fileOperations.deleteFile();
-
+        FileOperations.deleteFile(cryptFile);
         db.save();
+
+        log.debug("file deleted: " + cryptFile.getName());
     }
 
     public void renameFile(AbstractFile file, String name) {
+        log.debug(String.format("file rename from %s to %s ", file.getName(), name));
+
         file.setName(name);
 
         fileMetadata.replace(file.getUniqueId(), file);
-
         db.save();
     }
 
@@ -94,6 +98,7 @@ public class CryptFileSystem {
 
         db.save();
 
+        log.debug(String.format("file moved: %s", name));
     }
 
     public Folder getRoot() {

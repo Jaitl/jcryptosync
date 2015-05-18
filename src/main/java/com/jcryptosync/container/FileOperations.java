@@ -13,6 +13,7 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,13 +26,7 @@ import java.security.InvalidKeyException;
 public class FileOperations {
     protected static Logger log = LoggerFactory.getLogger(FileOperations.class);
 
-    private CryptFile file;
-
-    public FileOperations(CryptFile file) {
-        this.file = file;
-    }
-
-    public void addFile(InputStream is) {
+    public static void cryptFile(CryptFile file, InputStream is) {
         SecretKey key = CryptFactory.generateKey();
 
         file.setKey(key.getEncoded());
@@ -39,14 +34,18 @@ public class FileOperations {
         byte[] ivByte = CryptFactory.generateRandomIV();
         file.setIv(ivByte);
 
-        Path pathToFile = QuickPreferences.getPathToCryptDir().resolve(file.getUniqueId());
-
-        saveCryptFile(is, key, ivByte, pathToFile);
+        try {
+            if(is.available() > 0) {
+                saveCryptFile(file, is);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         log.info("crypt file: " + file.getName());
     }
 
-    public void getFile(OutputStream os) {
+    public static void decryptFile(CryptFile file, OutputStream os) {
         Path enctyptFile = QuickPreferences.getPathToCryptDir();
         enctyptFile = enctyptFile.resolve(file.getUniqueId());
 
@@ -54,21 +53,16 @@ public class FileOperations {
         try {
             is = Files.newInputStream(enctyptFile, StandardOpenOption.READ);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error open crypt file", e);
         }
 
         Cipher cipher = CryptFactory.createCipher();
 
-        byte[] key = file.getKey();
-
-        SecretKey secretKey = new SecretKeySpec(key, 0, key.length, "AES");
-
-        byte[] iv = file.getIv();
-
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        IvParameterSpec ivSpec = new IvParameterSpec(file.getIv());
+        SecretKey key = new SecretKeySpec(file.getKey(), "AES");
 
         try {
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+            cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
         } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
             log.error("decrypt error", e);
         }
@@ -81,7 +75,7 @@ public class FileOperations {
         }
     }
 
-    public void deleteFile() {
+    public static void deleteFile(CryptFile file) {
         Path pathToCryptFile = QuickPreferences.getPathToCryptDir();
         pathToCryptFile = pathToCryptFile.resolve(file.getUniqueId());
 
@@ -92,17 +86,31 @@ public class FileOperations {
         }
     }
 
-    private void saveCryptFile(InputStream outIs, SecretKey key, byte[] iv, Path pathToCryptFile) {
+    public static void updateFile(CryptFile file, InputStream is) {
+        Path pathToCryptFile = QuickPreferences.getPathToCryptDir();
+        pathToCryptFile = pathToCryptFile.resolve(file.getUniqueId());
+
+        if (Files.exists(pathToCryptFile)) {
+            deleteFile(file);
+        }
+
+        saveCryptFile(file, is);
+    }
+
+    private static void saveCryptFile(CryptFile file, InputStream inIs) {
+        Path pathToFile = QuickPreferences.getPathToCryptDir().resolve(file.getUniqueId());
+
         Cipher cipher = CryptFactory.createCipher();
 
         OutputStream os = null;
         try {
-            os = Files.newOutputStream(pathToCryptFile, StandardOpenOption.CREATE_NEW);
+            os = Files.newOutputStream(pathToFile, StandardOpenOption.CREATE_NEW);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error create file", e);
         }
 
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        IvParameterSpec ivSpec = new IvParameterSpec(file.getIv());
+        SecretKey key = new SecretKeySpec(file.getKey(), "AES");
 
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
@@ -110,8 +118,7 @@ public class FileOperations {
             log.error("crypt error", e);
         }
 
-        try(CipherInputStream is = new CipherInputStream(outIs, cipher)) {
-
+        try(CipherInputStream is = new CipherInputStream(inIs, cipher)) {
             StreamUtils.readTo(is, os);
 
         } catch (IOException e) {
