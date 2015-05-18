@@ -1,6 +1,7 @@
 package com.jcryptosync.controllers.login;
 
-import com.jcryptosync.QuickPreferences;
+import com.jcryptosync.UserPreferences;
+import com.jcryptosync.container.Bootstrap;
 import com.jcryptosync.container.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.container.primarykey.PrimaryKeyManager;
 import com.jcryptosync.controllers.LoginSceneFactory;
@@ -33,7 +34,7 @@ public class LoginController extends BaseLoginController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения ключа");
 
-        Path initDir = QuickPreferences.getPathToKey().getParent();
+        Path initDir = UserPreferences.getPathToKey().getParent();
 
         if(initDir != null) {
             if (Files.exists(initDir)) {
@@ -45,7 +46,7 @@ public class LoginController extends BaseLoginController {
 
         if(key != null) {
             pathToKey.setText(key.getPath());
-            QuickPreferences.setPathToKey(key.getPath());
+            UserPreferences.setPathToKey(key.getPath());
         }
     }
 
@@ -54,7 +55,7 @@ public class LoginController extends BaseLoginController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения контейнера");
 
-        Path initDir = QuickPreferences.getPathToContainer().getParent();
+        Path initDir = UserPreferences.getPathToContainer().getParent();
 
         if(initDir != null) {
             if (Files.exists(initDir)) {
@@ -71,7 +72,7 @@ public class LoginController extends BaseLoginController {
 
         if(container != null) {
             pathToContainer.setText(container.getPath());
-            QuickPreferences.setPathToContainer(container.getPath());
+            UserPreferences.setPathToContainer(container.getPath());
         }
     }
 
@@ -87,11 +88,11 @@ public class LoginController extends BaseLoginController {
 
                 if(passIsCorrect) {
                     Stage stage = StageFactory.createContainerStage(getClass().getClassLoader());
+
+                    UserPreferences.setPathToContainer(pathToContainer.getText());
+                    UserPreferences.setPathToKey(pathToKey.getText());
+
                     stage.show();
-
-                    QuickPreferences.setPathToContainer(pathToContainer.getText());
-                    QuickPreferences.setPathToKey(pathToKey.getText());
-
                     ((Node)(event.getSource())).getScene().getWindow().hide();
                 }
             } catch (IOException e) {
@@ -112,12 +113,12 @@ public class LoginController extends BaseLoginController {
         createButton.setText("Создать контейнер");
         enterButton.setText("Войти");
 
-        String pathKey = QuickPreferences.getPathToKey().toString();
+        String pathKey = UserPreferences.getPathToKey().toString();
 
         if(pathToKey != null)
             pathToKey.setText(pathKey);
 
-        String pathContainer = QuickPreferences.getPathToContainer().toString();
+        String pathContainer = UserPreferences.getPathToContainer().toString();
 
         if(pathContainer != null)
             pathToContainer.setText(pathContainer);

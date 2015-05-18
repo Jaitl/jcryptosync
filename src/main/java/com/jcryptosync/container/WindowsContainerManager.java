@@ -13,8 +13,6 @@ public class WindowsContainerManager extends ContainerManager {
     private char diskLetter;
 
     public WindowsContainerManager() {
-        pathToWebDavServer = "http://localhost:8080/webdav";
-
         Path home = Paths.get(System.getProperty("user.home"));
         diskLetter = findLetter('c');
     }

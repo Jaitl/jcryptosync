@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 public class Preferences {
-
     private static org.slf4j.Logger log = LoggerFactory.getLogger(Preferences.class);
 
     private final Properties properties = new Properties();

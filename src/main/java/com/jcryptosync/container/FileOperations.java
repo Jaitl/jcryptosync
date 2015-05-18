@@ -1,6 +1,6 @@
 package com.jcryptosync.container;
 
-import com.jcryptosync.QuickPreferences;
+import com.jcryptosync.UserPreferences;
 import com.jcryptosync.container.utils.CryptFactory;
 import com.jcryptosync.container.webdav.CryptFile;
 import io.milton.common.StreamUtils;
@@ -13,7 +13,6 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,7 +45,7 @@ public class FileOperations {
     }
 
     public static void decryptFile(CryptFile file, OutputStream os) {
-        Path enctyptFile = QuickPreferences.getPathToCryptDir();
+        Path enctyptFile = UserPreferences.getPathToCryptDir();
         enctyptFile = enctyptFile.resolve(file.getUniqueId());
 
         InputStream is = null;
@@ -76,7 +75,7 @@ public class FileOperations {
     }
 
     public static void deleteFile(CryptFile file) {
-        Path pathToCryptFile = QuickPreferences.getPathToCryptDir();
+        Path pathToCryptFile = UserPreferences.getPathToCryptDir();
         pathToCryptFile = pathToCryptFile.resolve(file.getUniqueId());
 
         try {
@@ -87,7 +86,7 @@ public class FileOperations {
     }
 
     public static void updateFile(CryptFile file, InputStream is) {
-        Path pathToCryptFile = QuickPreferences.getPathToCryptDir();
+        Path pathToCryptFile = UserPreferences.getPathToCryptDir();
         pathToCryptFile = pathToCryptFile.resolve(file.getUniqueId());
 
         if (Files.exists(pathToCryptFile)) {
@@ -98,7 +97,7 @@ public class FileOperations {
     }
 
     private static void saveCryptFile(CryptFile file, InputStream inIs) {
-        Path pathToFile = QuickPreferences.getPathToCryptDir().resolve(file.getUniqueId());
+        Path pathToFile = UserPreferences.getPathToCryptDir().resolve(file.getUniqueId());
 
         Cipher cipher = CryptFactory.createCipher();
 

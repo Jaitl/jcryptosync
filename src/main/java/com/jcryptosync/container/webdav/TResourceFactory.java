@@ -18,6 +18,8 @@
  */
 package com.jcryptosync.container.webdav;
 
+import com.jcryptosync.container.ContainerPreferences;
+import com.jcryptosync.controllers.container.ContainerController;
 import io.milton.common.Path;
 import io.milton.http.ResourceFactory;
 import io.milton.resource.Resource;
@@ -29,12 +31,11 @@ public class TResourceFactory implements ResourceFactory {
 
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TResourceFactory.class);
     public static final Folder ROOT;
-    static final Map<String,String> users = new HashMap<String, String>();
+    static final Map<String, User> users = new HashMap<>();
 
     static {
-        addUser( "usera", "password");
-        addUser( "userb", "password");
-        addUser( "userv", "password");
+        User user = ContainerPreferences.getInstance().getUser();
+        users.put(user.getName(), user);
 
         CryptFileSystem fs = CryptFileSystem.getInstance();
 
@@ -42,10 +43,6 @@ public class TResourceFactory implements ResourceFactory {
     }
 
     private String contextPath = "webdav";
-
-    private static void addUser(String name, String password) {
-        users.put(name, password);
-    }
 
 
     @Override

@@ -80,7 +80,7 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
 
     @Override
     public Object authenticate(String user, String requestedPassword) {
-        String p = TResourceFactory.users.get(user);
+        String p = TResourceFactory.users.get(user).getPassword();
         if (p != null) {
             if (p.equals(requestedPassword)) {
                 return Boolean.TRUE;
@@ -95,7 +95,7 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
 
     @Override
     public Object authenticate(DigestResponse digestRequest) {
-        String p = TResourceFactory.users.get(digestRequest.getUser());
+        String p = TResourceFactory.users.get(digestRequest.getUser()).getPassword();
         if (p != null) {
             DigestGenerator gen = new DigestGenerator();
             String actual = gen.generateDigest(digestRequest, p);

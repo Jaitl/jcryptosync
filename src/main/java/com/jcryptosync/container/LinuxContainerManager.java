@@ -15,8 +15,6 @@ public class LinuxContainerManager extends ContainerManager {
 
 
     public LinuxContainerManager() {
-        pathToWebDavServer = "http://localhost:8080/webdav";
-
         Path home = Paths.get(System.getProperty("user.home"));
         pathToMountFolder = home.resolve(nameMountFolder);
     }

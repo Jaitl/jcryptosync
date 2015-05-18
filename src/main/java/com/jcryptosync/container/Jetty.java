@@ -14,7 +14,9 @@ public class Jetty {
 
     public Jetty() {
 
-        server = new Server(8080);
+        int port = ContainerPreferences.getInstance().getJettyPort();
+
+        server = new Server(port);
         server.setStopAtShutdown(true);
         WebAppContext root = new WebAppContext();
 

@@ -1,10 +1,9 @@
 package com.jcryptosync.container.webdav;
 
-import com.jcryptosync.QuickPreferences;
+import com.jcryptosync.UserPreferences;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -12,12 +11,13 @@ public class DataBase {
     private static final DataBase instance = new DataBase();
 
     private static final String ROOT_FOLDER_ID = "rootFolderId";
-    public static final String FILE_METADATA = "fileMetadata";
+    private static final String FILE_METADATA = "fileMetadata";
+    private static final String INTERNAL_SETTINGS = "internalSettings";
 
     private DB db;
 
     private DataBase() {
-        Path pathToDb = QuickPreferences.getPathToContainer();
+        Path pathToDb = UserPreferences.getPathToContainer();
         db = DBMaker.newFileDB(pathToDb.toFile()).closeOnJvmShutdown().make();
     }
 
@@ -27,6 +27,9 @@ public class DataBase {
 
     public Map<String, AbstractFile> getFileMetadata() {
         return  db.getTreeMap(FILE_METADATA);
+    }
+    public Map<String, Object> getInternalSettings() {
+        return  db.getTreeMap(INTERNAL_SETTINGS);
     }
 
     public void save() {

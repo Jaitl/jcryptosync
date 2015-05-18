@@ -64,6 +64,9 @@ public class CryptFileSystem {
         FileOperations.updateFile(cryptFile, is);
 
         log.debug("file updated: " + cryptFile.getName());
+
+        fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
+        db.save();
     }
 
     public void deleteFolder(Folder folder) {

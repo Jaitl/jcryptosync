@@ -1,27 +1,28 @@
 package com.jcryptosync.container;
 
 import com.jcryptosync.container.exceptoins.ContainerMountException;
+import com.jcryptosync.container.webdav.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ContainerManager {
 
-    protected final String user = "usera";
-    protected final String password = "password";
+    protected final String user;
+    protected final String password;
     protected String pathToWebDavServer;
 
+    public ContainerManager() {
+        ContainerPreferences preferences = ContainerPreferences.getInstance();
+
+        int port = preferences.getJettyPort();
+        pathToWebDavServer = String.format("http://localhost:%s/webdav", port);
+
+        User userr = preferences.getUser();
+        user = userr.getName();
+        password = userr.getPassword();
+    }
+
     protected static Logger log = LoggerFactory.getLogger(ContainerManager.class);
-
-    private Jetty jetty = new Jetty();
-
-    public void startJetty() {
-        jetty.startServer();
-    }
-
-    public void stopJetty() {
-        jetty.stopServer();
-        log.info("stop jetty");
-    }
 
     public void openContainer() throws ContainerMountException {
         log.info("open container");

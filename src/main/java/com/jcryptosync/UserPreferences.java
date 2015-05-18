@@ -1,15 +1,21 @@
 package com.jcryptosync;
 
-import java.io.IOException;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
-public class QuickPreferences {
+public class UserPreferences {
     private static Preferences preferences = new Preferences();
 
     private static String PATH_TO_KEY = "path-to-key";
     private static String PATH_TO_CONTAINER = "path-to-container";
+    private static String START_PORT = "start-port";
+    private static String END_PORT = "end-port";
 
     public static void setPathToKey(String path) {
         preferences.put(PATH_TO_KEY, path);
@@ -54,5 +60,13 @@ public class QuickPreferences {
 
     public static Path getPathToWorkDir() {
         return getPathToContainer().getParent();
+    }
+
+    public static int getStartPort() {
+        return Integer.parseInt(preferences.get(START_PORT, "34580"));
+    }
+
+    public static int getEndPort() {
+        return Integer.parseInt(preferences.get(END_PORT, "34600"));
     }
 }

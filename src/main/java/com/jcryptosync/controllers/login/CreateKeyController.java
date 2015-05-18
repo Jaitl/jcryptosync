@@ -1,6 +1,6 @@
 package com.jcryptosync.controllers.login;
 
-import com.jcryptosync.QuickPreferences;
+import com.jcryptosync.UserPreferences;
 import com.jcryptosync.container.primarykey.PrimaryKeyManager;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.controllers.StageFactory;
@@ -34,7 +34,7 @@ public class CreateKeyController extends BaseLoginController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения ключа");
 
-        Path initDir = QuickPreferences.getPathToKey().getParent();
+        Path initDir = UserPreferences.getPathToKey().getParent();
 
         if(initDir != null) {
             if (Files.exists(initDir)) {
@@ -46,7 +46,7 @@ public class CreateKeyController extends BaseLoginController {
 
         if(key != null) {
             pathToKey.setText(key.getPath());
-            QuickPreferences.setPathToKey(key.getPath());
+            UserPreferences.setPathToKey(key.getPath());
         }
     }
 
@@ -55,7 +55,7 @@ public class CreateKeyController extends BaseLoginController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выбор расположения контейнера");
 
-        Path initDir = QuickPreferences.getPathToContainer().getParent();
+        Path initDir = UserPreferences.getPathToContainer().getParent();
 
         if(initDir != null) {
             if (Files.exists(initDir)) {
@@ -67,7 +67,7 @@ public class CreateKeyController extends BaseLoginController {
 
         if(container != null) {
             pathToContainer.setText(container.getPath());
-            QuickPreferences.setPathToContainer(container.getPath());
+            UserPreferences.setPathToContainer(container.getPath());
         }
     }
 
@@ -81,13 +81,12 @@ public class CreateKeyController extends BaseLoginController {
                 keyManager.saveNewCryptKeyToFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
                 Stage stage = StageFactory.createContainerStage(keyManager.getClass().getClassLoader());
+
+                UserPreferences.setPathToContainer(pathToContainer.getText());
+                UserPreferences.setPathToKey(pathToKey.getText());
+
                 stage.show();
-
-                QuickPreferences.setPathToContainer(pathToContainer.getText());
-                QuickPreferences.setPathToKey(pathToKey.getText());
-
-                        ((Node) (event.getSource())).getScene().getWindow().hide();
-
+                ((Node) (event.getSource())).getScene().getWindow().hide();
             } catch (IOException e) {
                 setError("Ошибка при сохранении ключа", pathToKey);
             }

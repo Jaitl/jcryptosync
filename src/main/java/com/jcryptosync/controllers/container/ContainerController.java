@@ -1,5 +1,6 @@
 package com.jcryptosync.controllers.container;
 
+import com.jcryptosync.container.Bootstrap;
 import com.jcryptosync.container.ContainerManager;
 import com.jcryptosync.container.exceptoins.ContainerMountException;
 import javafx.fxml.FXML;
@@ -39,7 +40,7 @@ public class ContainerController {
 
     private ContainerStatus containerStatus = ContainerStatus.Disabled;
 
-    private ContainerManager containerManager = ContainerManager.createManager();
+    private Bootstrap bootstrap = new Bootstrap();
 
     @FXML
     private void executeAction() {
@@ -65,15 +66,15 @@ public class ContainerController {
     public void prepareDialog(Stage stage) {
         clearError();
         statusDisabled();
-        containerManager.startJetty();
+        bootstrap.runApplication();
 
-        stage.setOnCloseRequest(e -> containerManager.stopJetty());
-        stage.setOnHiding(e -> containerManager.stopJetty());
+        stage.setOnCloseRequest(e -> bootstrap.stopApplication());
+        //stage.setOnHiding(e -> bootstrap.stopApplication());
     }
 
     private boolean enableContainer() {
         try {
-            containerManager.openContainer();
+            bootstrap.openContainer();
         } catch (ContainerMountException e) {
             log.error("open container error", e);
             setError(e.getMessage());
@@ -85,7 +86,7 @@ public class ContainerController {
 
     private boolean disableContainer() {
         try {
-            containerManager.closeContainer();
+            bootstrap.closeContainer();
         } catch (ContainerMountException e) {
             log.error("close container error", e);
             setError(e.getMessage());
