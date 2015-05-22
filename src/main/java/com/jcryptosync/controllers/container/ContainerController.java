@@ -15,12 +15,6 @@ import org.slf4j.LoggerFactory;
 
 public class ContainerController {
     protected static Logger log = LoggerFactory.getLogger(ContainerController.class);
-   @FXML
-    private PasswordField passwordField;
-    @FXML
-    private Label passwordLabel;
-    @FXML
-    private VBox passwordVbox;
     @FXML
     private TextArea errorArea;
     @FXML
@@ -49,7 +43,6 @@ public class ContainerController {
 
             if(result) {
                 containerStatus = ContainerStatus.Enabled;
-                hidePasswordForm();
                 statusEnabled();
             }
         } else if(containerStatus == ContainerStatus.Enabled) {
@@ -57,7 +50,6 @@ public class ContainerController {
 
             if(result) {
                 containerStatus = ContainerStatus.Disabled;
-                showPasswordForm();
                 statusDisabled();
             }
         }
@@ -113,11 +105,9 @@ public class ContainerController {
 
     private void clearError() {
         hideErrorForm();
-        passwordField.getStyleClass().removeAll("error");
     }
     private void setError(String error) {
         showErrorForm();
-        passwordField.getStyleClass().addAll("error");
         errorArea.setText(error);
     }
 
@@ -137,23 +127,5 @@ public class ContainerController {
         errorLabel.setVisible(true);
         errorArea.setManaged(true);
         errorArea.setVisible(true);
-    }
-
-    private void hidePasswordForm() {
-        passwordVbox.setManaged(false);
-        passwordVbox.setVisible(false);
-        passwordLabel.setManaged(false);
-        passwordLabel.setVisible(false);
-        passwordField.setManaged(false);
-        passwordField.setVisible(false);
-    }
-
-    private void showPasswordForm() {
-        passwordVbox.setManaged(true);
-        passwordVbox.setVisible(true);
-        passwordLabel.setManaged(true);
-        passwordLabel.setVisible(true);
-        passwordField.setManaged(true);
-        passwordField.setVisible(true);
     }
 }

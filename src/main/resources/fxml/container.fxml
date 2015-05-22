@@ -23,7 +23,7 @@
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Label>
-                  <Label text="Отключен" fx:id="statusLabel" />
+                  <Label fx:id="statusLabel" text="Отключен" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -38,22 +38,9 @@
    <center>
       <VBox prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox fx:id="passwordVbox" prefHeight="0.0" prefWidth="0.0">
-               <children>
-                  <Label fx:id="passwordLabel" text="Пароль:" />
-                  <PasswordField fx:id="passwordField">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                  </PasswordField>
-               </children>
-            </VBox>
             <VBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#executeAction" text="Подключить контейрен" fx:id="executeButton" />
+                  <Button fx:id="executeButton" mnemonicParsing="false" onAction="#executeAction" text="Подключить контейрен" />
                </children>
                <VBox.margin>
                   <Insets top="10.0" />
