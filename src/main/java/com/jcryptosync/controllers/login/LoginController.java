@@ -1,7 +1,6 @@
 package com.jcryptosync.controllers.login;
 
 import com.jcryptosync.UserPreferences;
-import com.jcryptosync.container.Bootstrap;
 import com.jcryptosync.container.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.container.primarykey.PrimaryKeyManager;
 import com.jcryptosync.controllers.LoginSceneFactory;

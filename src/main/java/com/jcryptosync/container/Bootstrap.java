@@ -4,6 +4,8 @@ import com.jcryptosync.container.exceptoins.ContainerMountException;
 import com.jcryptosync.container.utils.SecurityUtils;
 import com.jcryptosync.container.webdav.User;
 
+import java.util.UUID;
+
 public class Bootstrap {
     private ContainerManager containerManager;
     protected static transient org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Bootstrap.class);
@@ -12,6 +14,7 @@ public class Bootstrap {
     public void runApplication() {
         findPort();
         generateUser();
+        generateContainerName();
         containerManager = ContainerManager.createManager();
         jetty = new Jetty();
         runJetty();
@@ -54,5 +57,12 @@ public class Bootstrap {
         int port = SecurityUtils.getFreePort();
         System.out.println("find port: " + port);
         ContainerPreferences.getInstance().setJettyPort(port);
+    }
+
+    private void generateContainerName() {
+        String containerName = System.getProperty("user.name");
+        String soil[] = UUID.randomUUID().toString().split("-");
+        containerName += "-" + soil[0];
+        ContainerPreferences.getInstance().setContainerName(containerName);
     }
 }

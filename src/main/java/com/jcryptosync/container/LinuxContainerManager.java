@@ -9,12 +9,14 @@ import java.nio.file.Paths;
 
 public class LinuxContainerManager extends ContainerManager {
 
-    private String nameMountFolder = "cryptFiles";
+    private String nameMountFolder;
 
     private Path pathToMountFolder;
 
 
     public LinuxContainerManager() {
+        nameMountFolder = ContainerPreferences.getInstance().getContainerName();
+
         Path home = Paths.get(System.getProperty("user.home"));
         pathToMountFolder = home.resolve(nameMountFolder);
     }

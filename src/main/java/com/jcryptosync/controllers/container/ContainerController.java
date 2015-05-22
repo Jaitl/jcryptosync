@@ -1,12 +1,10 @@
 package com.jcryptosync.controllers.container;
 
 import com.jcryptosync.container.Bootstrap;
-import com.jcryptosync.container.ContainerManager;
 import com.jcryptosync.container.exceptoins.ContainerMountException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;

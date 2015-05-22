@@ -19,7 +19,6 @@
 package com.jcryptosync.container.webdav;
 
 import com.jcryptosync.container.ContainerPreferences;
-import com.jcryptosync.controllers.container.ContainerController;
 import io.milton.common.Path;
 import io.milton.http.ResourceFactory;
 import io.milton.resource.Resource;
