@@ -23,7 +23,7 @@ public class WindowsContainerManager extends ContainerManager {
         Process pr = null;
 
         try {
-            pr = rt.exec(String.format("net use %s: \"%s\" /User:%s %s", diskLetter, pathToWebDavServer, user, password));
+            pr = rt.exec(String.format("net use %s: \"%s\" /User:%s %s", diskLetter, pathToWebDavServer, user.getName(), user.getPassword()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -31,7 +31,7 @@ public class WindowsContainerManager extends ContainerManager {
         try {
             int code = pr.waitFor();
             if(code != 0)
-                throw new ContainerMountException("Не удалось подключить контейнер");
+                throw new ContainerMountException("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -52,7 +52,7 @@ public class WindowsContainerManager extends ContainerManager {
         try {
             int code = pr.waitFor();
             if(code != 0)
-                throw new ContainerMountException("Не удалось отключть контейнер");
+                throw new ContainerMountException("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 
         } catch (InterruptedException e) {
             e.printStackTrace();

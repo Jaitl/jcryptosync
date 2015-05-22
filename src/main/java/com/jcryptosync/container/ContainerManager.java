@@ -7,8 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ContainerManager {
 
-    protected final String user;
-    protected final String password;
+    protected final User user;
     protected String pathToWebDavServer;
 
     public ContainerManager() {
@@ -17,9 +16,7 @@ public abstract class ContainerManager {
         int port = preferences.getJettyPort();
         pathToWebDavServer = String.format("http://localhost:%s/webdav", port);
 
-        User userr = preferences.getUser();
-        user = userr.getName();
-        password = userr.getPassword();
+        user = preferences.getUser();
     }
 
     protected static Logger log = LoggerFactory.getLogger(ContainerManager.class);

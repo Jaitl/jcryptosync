@@ -36,7 +36,7 @@ public class LinuxContainerManager extends ContainerManager {
         }
 
         try {
-            pr = rt.exec(String.format("wdfs %s %s -o username=%s -o password=%s", pathToWebDavServer, pathToMountFolder, user, password));
+            pr = rt.exec(String.format("wdfs %s %s -o username=%s -o password=%s", pathToWebDavServer, pathToMountFolder, user.getName(), user.getPassword()));
         } catch (IOException e) {
             e.printStackTrace();
         }
