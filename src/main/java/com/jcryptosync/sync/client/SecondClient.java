@@ -1,8 +1,13 @@
 package com.jcryptosync.sync.client;
 
+import com.jcryptosync.sync.SyncFiles;
+
+import javax.xml.ws.Service;
+
 public class SecondClient {
     public String idClient;
     public String host;
+    public SyncFiles syncFilesService;
     public int port;
 
     public SecondClient() {
@@ -35,5 +40,13 @@ public class SecondClient {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public SyncFiles getSyncFilesService() {
+        return syncFilesService;
+    }
+
+    public void setSyncFilesService(SyncFiles syncFilesService) {
+        this.syncFilesService = syncFilesService;
     }
 }

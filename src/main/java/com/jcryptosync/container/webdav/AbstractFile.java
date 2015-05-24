@@ -24,7 +24,9 @@ import io.milton.http.Request.Method;
 import io.milton.http.http11.auth.DigestGenerator;
 import io.milton.http.http11.auth.DigestResponse;
 import io.milton.resource.*;
+import org.apache.log4j.Logger;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
@@ -34,12 +36,15 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
 
     protected static transient org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbstractFile.class);
 
+    @XmlElement
     protected String id;
     protected String name;
     protected Date modDate;
     protected Date createdDate;
 
     protected String parentId;
+
+    public AbstractFile() {}
 
 
     public AbstractFile(String name, String parentId) {
@@ -150,5 +155,25 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
     @Override
     public Date getCreateDate() {
         return createdDate;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Date getModDate() {
+        return modDate;
+    }
+
+    public void setModDate(Date modDate) {
+        this.modDate = modDate;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

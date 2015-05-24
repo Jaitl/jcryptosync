@@ -33,7 +33,7 @@ import java.util.List;
 
 public class Folder extends AbstractFile implements PutableResource, MakeCollectionableResource {
 
-
+    public Folder() {}
 
     public Folder(String name, String parentId) {
         super(name, parentId);

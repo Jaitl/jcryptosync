@@ -1,11 +1,9 @@
 package com.jcryptosync.container;
 
-import com.jcryptosync.UserPreferences;
 import com.jcryptosync.container.exceptoins.ContainerMountException;
 import com.jcryptosync.container.utils.SecurityUtils;
 import com.jcryptosync.container.webdav.User;
-import com.jcryptosync.sync.SyncPreferences;
-import com.jcryptosync.sync.client.SecondClient;
+import com.jcryptosync.sync.Syncronizer;
 
 import java.util.UUID;
 
@@ -14,6 +12,8 @@ public class Bootstrap {
     protected static transient org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Bootstrap.class);
     private Jetty jetty;
     private ContainerPreferences containerPreferences;
+
+    private Syncronizer syncronizer;
 
     public void runApplication() {
         containerPreferences = ContainerPreferences.getInstance();
@@ -24,7 +24,11 @@ public class Bootstrap {
         jetty = new Jetty();
         runJetty();
 
-        Runnable runnable = this::findLocalClients;
+        syncronizer = new Syncronizer();
+
+        Runnable runnable = () -> {
+            syncronizer.runFirstSync();
+        };
 
         new Thread(runnable).start();
     }
@@ -73,20 +77,5 @@ public class Bootstrap {
         String soil[] = UUID.randomUUID().toString().split("-");
         containerName += "-" + soil[0];
         containerPreferences.setContainerName(containerName);
-    }
-
-    private void findLocalClients() {
-        int startPort = UserPreferences.getStartPort();
-        int endPort = UserPreferences.getEndPort();
-
-        SyncPreferences syncPreferences = SyncPreferences.getInstance();
-
-        for(; startPort <= endPort; startPort++) {
-            if(SecurityUtils.portIsOpen(startPort)) {
-                syncPreferences.addClient(new SecondClient("localhost", startPort));
-
-                log.info("found client, port: " + startPort);
-            }
-        }
     }
 }

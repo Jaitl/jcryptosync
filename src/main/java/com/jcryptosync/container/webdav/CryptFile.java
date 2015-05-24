@@ -40,6 +40,8 @@ public class CryptFile extends AbstractFile implements ReplaceableResource, Geta
     private byte[] key;
     private byte[] iv;
 
+    public CryptFile() {}
+
 
     public CryptFile(String name, String parentId, Long length, String contentType) {
         super(name, parentId);
@@ -91,6 +93,22 @@ public class CryptFile extends AbstractFile implements ReplaceableResource, Geta
 
         CryptFileSystem fileSystem = CryptFileSystem.getInstance();
         fileSystem.deleteFile(this);
+    }
+
+    public Long getLength() {
+        return length;
+    }
+
+    public void setLength(Long length) {
+        this.length = length;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public byte[] getKey() {
