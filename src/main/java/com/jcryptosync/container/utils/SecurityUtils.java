@@ -27,7 +27,7 @@ public class SecurityUtils {
         return port;
     }
 
-    private static boolean portIsOpen(int port) {
+    public static boolean portIsOpen(int port) {
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress("localhost", port), 200);
