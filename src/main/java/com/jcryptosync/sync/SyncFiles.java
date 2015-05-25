@@ -14,6 +14,12 @@ import java.util.List;
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface SyncFiles {
+
+    @WebMethod
+    String getSessionId(String clientId, String groupId);
+
+    Token authentication(String sessionId, byte[] sessionDigest);
+
     @WebMethod
     ListCryptFiles getAllFiles();
 

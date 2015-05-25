@@ -1,5 +1,6 @@
 package com.jcryptosync.controllers.login;
 
+import com.jcryptosync.container.primarykey.PrimaryKey;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -89,4 +90,5 @@ public abstract class BaseLoginController {
     protected boolean checkPassword(String password) {
         return true;
     }
+
 }

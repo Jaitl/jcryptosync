@@ -2,9 +2,12 @@ package com.jcryptosync.controllers.login;
 
 import com.jcryptosync.UserPreferences;
 import com.jcryptosync.container.exceptoins.NoCorrectPasswordException;
+import com.jcryptosync.container.primarykey.PrimaryKey;
 import com.jcryptosync.container.primarykey.PrimaryKeyManager;
+import com.jcryptosync.container.utils.HashUtils;
 import com.jcryptosync.controllers.LoginSceneFactory;
 import com.jcryptosync.controllers.StageFactory;
+import com.jcryptosync.sync.SyncPreferences;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -90,6 +93,14 @@ public class LoginController extends BaseLoginController {
 
                     UserPreferences.setPathToContainer(pathToContainer.getText());
                     UserPreferences.setPathToKey(pathToKey.getText());
+
+                    PrimaryKey primaryKey = keyManager.loadPrimaryKeyFromFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
+
+                    String groupId = HashUtils.computeGroupId(primaryKey.getKey());
+                    SyncPreferences.getInstance().setGroupId(groupId);
+
+                    byte[] key = HashUtils.computeKey(firstPassword.getText(), primaryKey.getKey());
+                    SyncPreferences.getInstance().setKey(key);
 
                     stage.show();
                     ((Node)(event.getSource())).getScene().getWindow().hide();

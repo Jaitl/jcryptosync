@@ -8,6 +8,7 @@ import com.jcryptosync.container.webdav.DataBase;
 import com.jcryptosync.container.webdav.Folder;
 import com.jcryptosync.container.webdav.ListCryptFiles;
 import com.jcryptosync.sync.client.SecondClient;
+import com.jcryptosync.sync.utils.SyncUtils;
 import org.apache.log4j.Logger;
 
 import javax.activation.DataHandler;
@@ -28,6 +29,7 @@ public class Syncronizer {
 
     public void runFirstSync() {
         findClients();
+        authentication();
         requestFullFileList();
     }
 
@@ -45,6 +47,33 @@ public class Syncronizer {
                     log.info("found client, port: " + startPort);
                 }
             }
+        }
+    }
+
+    public void authentication() {
+        String clientId = SyncPreferences.getInstance().getClientId();
+        String groupId = SyncPreferences.getInstance().getGroupId();
+
+        SecondClient[] clientArray = clientList.toArray(new SecondClient[clientList.size()]);
+
+        for(int i = 0; i < clientArray.length; i++) {
+            SecondClient client = clientArray[i];
+
+            String sessionId = client.getSyncFilesService().getSessionId(clientId, groupId);
+            if(sessionId == null) {
+                clientList.remove(client);
+                break;
+            }
+
+            byte[] sessionDigest = SyncUtils.generateSessionDigest(sessionId);
+
+            Token token = client.getSyncFilesService().authentication(sessionId, sessionDigest);
+            if(token == null) {
+                clientList.remove(client);
+                break;
+            }
+
+            client.setToken(token);
         }
     }
 

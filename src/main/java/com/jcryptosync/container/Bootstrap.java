@@ -3,6 +3,7 @@ package com.jcryptosync.container;
 import com.jcryptosync.container.exceptoins.ContainerMountException;
 import com.jcryptosync.container.utils.SecurityUtils;
 import com.jcryptosync.container.webdav.User;
+import com.jcryptosync.sync.SyncPreferences;
 import com.jcryptosync.sync.Syncronizer;
 
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class Bootstrap {
         generateContainerName();
         containerManager = ContainerManager.createManager();
         jetty = new Jetty();
-        runJetty();
+        runJetty();generateIdClient();
 
         syncronizer = new Syncronizer();
 
@@ -77,5 +78,11 @@ public class Bootstrap {
         String soil[] = UUID.randomUUID().toString().split("-");
         containerName += "-" + soil[0];
         containerPreferences.setContainerName(containerName);
+    }
+
+    private void generateIdClient() {
+        String idClient = UUID.randomUUID().toString();
+
+        SyncPreferences.getInstance().setClientId(idClient);
     }
 }

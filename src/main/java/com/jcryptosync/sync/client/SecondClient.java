@@ -1,14 +1,13 @@
 package com.jcryptosync.sync.client;
 
 import com.jcryptosync.sync.SyncFiles;
-
-import javax.xml.ws.Service;
+import com.jcryptosync.sync.Token;
 
 public class SecondClient {
-    public String idClient;
     public String host;
     public SyncFiles syncFilesService;
     public int port;
+    public Token token;
 
     public SecondClient() {
     }
@@ -16,14 +15,6 @@ public class SecondClient {
     public SecondClient(String host, int port) {
         this.host = host;
         this.port = port;
-    }
-
-    public String getIdClient() {
-        return idClient;
-    }
-
-    public void setIdClient(String idClient) {
-        this.idClient = idClient;
     }
 
     public String getHost() {
@@ -48,5 +39,13 @@ public class SecondClient {
 
     public void setSyncFilesService(SyncFiles syncFilesService) {
         this.syncFilesService = syncFilesService;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
     }
 }
