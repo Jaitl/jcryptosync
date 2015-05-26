@@ -1,5 +1,6 @@
 package com.jcryptosync.sync;
 
+import com.google.gson.Gson;
 import com.jcryptosync.UserPreferences;
 import com.jcryptosync.container.ContainerPreferences;
 import com.jcryptosync.container.utils.SecurityUtils;
@@ -12,15 +13,17 @@ import com.jcryptosync.sync.utils.SyncUtils;
 import org.apache.log4j.Logger;
 
 import javax.activation.DataHandler;
+import javax.crypto.SecretKey;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Syncronizer {
     private static Logger log = Logger.getLogger(Syncronizer.class);
@@ -58,8 +61,12 @@ public class Syncronizer {
 
         for(int i = 0; i < clientArray.length; i++) {
             SecondClient client = clientArray[i];
+            client.syncFilesService = connectToClient(client);
 
             String sessionId = client.getSyncFilesService().getSessionId(clientId, groupId);
+
+            log.info(String.format("get sessionID: %s", sessionId));
+
             if(sessionId == null) {
                 clientList.remove(client);
                 break;
@@ -74,13 +81,15 @@ public class Syncronizer {
             }
 
             client.setToken(token);
+            addTokenToHeader(client, token);
+
+            log.info(String.format("get token from client: %s", token.getFirstClientId()));
         }
     }
 
     public void requestFullFileList() {
         if(clientList.size() > 0) {
             SecondClient client = clientList.get(0);
-            client.syncFilesService = connectToClient(client);
 
             ListCryptFiles listCryptFiles = client.syncFilesService.getAllFiles();
             listCryptFiles.getFileList().forEach(f -> {
@@ -91,6 +100,21 @@ public class Syncronizer {
             });
         }
 
+    }
+
+    public void addTokenToHeader(SecondClient client, Token token) {
+        Map<String, Object> req_ctx = ((BindingProvider)client.getSyncFilesService()).getRequestContext();
+
+        String WS_URL = String.format("http://%s:%s/api/SyncFiles?wsdl", client.getHost(), client.getPort());
+
+        req_ctx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, WS_URL);
+
+        Gson gson = new Gson();
+        String jsonToken = gson.toJson(token);
+
+        Map<String, List<String>> headers = new HashMap<>();
+        headers.put("token", Collections.singletonList(jsonToken));
+        req_ctx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
     }
 
     private SyncFiles connectToClient(SecondClient client) {
