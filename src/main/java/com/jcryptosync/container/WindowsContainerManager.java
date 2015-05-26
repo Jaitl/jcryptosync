@@ -13,11 +13,12 @@ public class WindowsContainerManager extends ContainerManager {
 
     public WindowsContainerManager() {
         Path home = Paths.get(System.getProperty("user.home"));
-        diskLetter = findLetter('c');
     }
 
     @Override
     public void mountContainer() throws ContainerMountException {
+        diskLetter = findLetter('c');
+        
         Runtime rt = Runtime.getRuntime();
         Process pr = null;
 
