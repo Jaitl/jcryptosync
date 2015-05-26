@@ -1,8 +1,8 @@
 package com.jcryptosync;
 
-import com.jcryptosync.container.exceptoins.NoCorrectPasswordException;
-import com.jcryptosync.container.primarykey.PrimaryKey;
-import com.jcryptosync.container.primarykey.PrimaryKeyManager;
+import com.jcryptosync.exceptoins.NoCorrectPasswordException;
+import com.jcryptosync.domain.MainKey;
+import com.jcryptosync.data.MasterKeyManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,21 +13,21 @@ public class PrimaryCryptFactoryTest {
     @Test
     public void testCreateKey() {
 
-        PrimaryKeyManager keyManager = new PrimaryKeyManager();
+        MasterKeyManager keyManager = new MasterKeyManager();
 
-        PrimaryKey primaryKey = keyManager.generateNewPrimaryKey();
+        MainKey mainKey = keyManager.generateNewPrimaryKey();
         String password = "rTf45345%^gfF^DS$fs";
         SecretKey key = keyManager.generateKeyFromPassword(password);
 
-        byte[] cryptKey = keyManager.encryptKey(primaryKey, key);
+        byte[] cryptKey = keyManager.encryptKey(mainKey, key);
 
-        PrimaryKey decryptKey = null;
+        MainKey decryptKey = null;
         try {
             decryptKey = keyManager.decryptKey(cryptKey, key);
         } catch (NoCorrectPasswordException e) {
             e.printStackTrace();
         }
 
-        Assert.assertArrayEquals(primaryKey.getKey(), decryptKey.getKey());
+        Assert.assertArrayEquals(mainKey.getKey(), decryptKey.getKey());
     }
 }

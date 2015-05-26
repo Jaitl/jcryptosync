@@ -14,12 +14,12 @@
         </init-param>
         <init-param>
             <param-name>resource.factory.class</param-name>
-            <param-value>com.jcryptosync.container.webdav.TResourceFactory</param-value>
+            <param-value>com.jcryptosync.vfs.webdav.config.TResourceFactory</param-value>
         </init-param>
 
         <init-param>
             <param-name>milton.configurator</param-name>
-            <param-value>com.jcryptosync.container.webdav.MyMiltonConfigurator</param-value>
+            <param-value>com.jcryptosync.vfs.webdav.config.MyMiltonConfigurator</param-value>
         </init-param>
 
         <init-param>

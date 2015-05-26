@@ -1,6 +1,6 @@
 package com.jcryptosync;
 
-import com.jcryptosync.controllers.LoginSceneFactory;
+import com.jcryptosync.ui.LoginSceneFactory;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

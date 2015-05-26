@@ -5,7 +5,7 @@
 
     <endpoint
             name="SimpleWebService"
-            implementation="com.jcryptosync.sync.SyncFilesImpl"
+            implementation="com.jcryptosync.sync.SyncServer"
             url-pattern="/api/SyncFiles" />
 
 </endpoints>
