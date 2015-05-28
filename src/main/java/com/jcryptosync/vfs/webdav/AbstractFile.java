@@ -45,6 +45,8 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
 
     protected String parentId;
 
+    protected boolean deleted;
+
     public AbstractFile() {}
 
 
@@ -54,6 +56,7 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
         this.name = name;
         modDate = new Date();
         createdDate = new Date();
+        deleted = false;
     }
 
     public String getParentId() {
@@ -176,5 +179,13 @@ public abstract class  AbstractFile implements Resource, PropFindableResource, D
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

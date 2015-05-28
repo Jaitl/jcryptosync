@@ -182,13 +182,18 @@ public class SyncClient {
             file.setParentId(db.getRootFolderId());
         }
 
-        if(localFile != null) {
-            if (!Arrays.equals(file.getHash(), localFile.getHash())) {
-                FileOperations.deleteFile(localFile);
+        if(!file.isDeleted()) {
+
+            if (localFile != null) {
+                if (!Arrays.equals(file.getHash(), localFile.getHash())) {
+                    FileOperations.deleteFile(localFile);
+                    loadFile(client, file);
+                }
+            } else {
                 loadFile(client, file);
             }
         } else {
-            loadFile(client, file);
+            FileOperations.deleteFile(file);
         }
 
         db.getFileMetadata().put(file.getUniqueId(), file);

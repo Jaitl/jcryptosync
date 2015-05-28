@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,6 +76,8 @@ public class CryptFileSystem {
 
         log.debug("file updated: " + cryptFile.getName());
 
+        cryptFile.setModDate(new Date());
+
         String clientId = ContainerPreferences.getInstance().getClientId();
         cryptFile.getVector().increaseModification(clientId);
         cryptFile.getVector().increaseSynchronization(clientId);
@@ -84,14 +87,18 @@ public class CryptFileSystem {
     }
 
     public void deleteFolder(Folder folder) {
-        fileMetadata.remove(folder.getUniqueId());
+        folder.setModDate(new Date());
+        folder.setDeleted(true);
+        fileMetadata.replace(folder.getUniqueId(), folder);
         db.save();
 
         log.debug("folder deleted: " + folder.getName());
     }
 
     public void deleteFile(CryptFile cryptFile) {
-        fileMetadata.remove(cryptFile.getUniqueId());
+        cryptFile.setModDate(new Date());
+        cryptFile.setDeleted(true);
+        fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
 
         FileOperations.deleteFile(cryptFile);
         db.save();
@@ -100,6 +107,8 @@ public class CryptFileSystem {
     }
 
     public void renameFile(AbstractFile file, String name) {
+        file.setModDate(new Date());
+
         log.debug(String.format("file rename from %s to %s ", file.getName(), name));
 
         file.setName(name);
@@ -115,6 +124,8 @@ public class CryptFileSystem {
     }
 
     public void moveFile(AbstractFile file, Folder folder, String name) {
+        file.setModDate(new Date());
+
         file.setParentId(folder.getUniqueId());
         file.setName(name);
 
