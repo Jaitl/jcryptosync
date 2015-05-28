@@ -1,5 +1,6 @@
 package com.jcryptosync.utils;
 
+import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.SyncPreferences;
 import com.jcryptosync.domain.Token;
 import org.apache.commons.lang.time.DateUtils;
@@ -28,7 +29,7 @@ public class SyncUtils {
     }
 
     public static Token generateToken(String secondClientId, String sessionId) {
-        String clientId = SyncPreferences.getInstance().getClientId();
+        String clientId = ContainerPreferences.getInstance().getClientId();
 
         Token token = new Token();
         token.setFirstClientId(clientId);
@@ -77,7 +78,7 @@ public class SyncUtils {
         if(!Arrays.equals(digest, token.getDigest()))
             return false;
 
-        String currentClientId = SyncPreferences.getInstance().getClientId();
+        String currentClientId = ContainerPreferences.getInstance().getClientId();
 
         // Проверка id текущего клиента
         if(!token.getFirstClientId().equals(currentClientId))

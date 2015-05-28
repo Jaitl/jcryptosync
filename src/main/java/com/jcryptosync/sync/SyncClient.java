@@ -10,6 +10,8 @@ import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
 import com.jcryptosync.utils.SecurityUtils;
 import com.jcryptosync.utils.SyncUtils;
+import com.jcryptosync.vfs.filesystem.FileOperations;
+import com.jcryptosync.vfs.webdav.AbstractFile;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import com.jcryptosync.vfs.webdav.Folder;
 import org.apache.log4j.Logger;
@@ -55,7 +57,7 @@ public class SyncClient {
     }
 
     public void authentication() {
-        String clientId = SyncPreferences.getInstance().getClientId();
+        String clientId = ContainerPreferences.getInstance().getClientId();
         String groupId = SyncPreferences.getInstance().getGroupId();
 
         SecondClient[] clientArray = clientList.toArray(new SecondClient[clientList.size()]);
@@ -96,8 +98,8 @@ public class SyncClient {
             listCryptFiles.getFileList().forEach(f -> {
                 if(f instanceof CryptFile)
                     synchronizeFile(client, (CryptFile) f, listCryptFiles.getRootId());
-                else
-                    synchronizeFolder((Folder) f, listCryptFiles.getRootId());
+                //else
+                   // synchronizeFolder((Folder) f, listCryptFiles.getRootId());
             });
         }
 
@@ -106,7 +108,7 @@ public class SyncClient {
     public void addTokenToHeader(SecondClient client, Token token) {
         Map<String, Object> req_ctx = ((BindingProvider)client.getSyncFilesService()).getRequestContext();
 
-        String WS_URL = String.format("http://%s:%s/api/SyncFiles?wsdl", client.getHost(), client.getPort());
+        String WS_URL = String.format("http://%s:%s/api/SyncServer?wsdl", client.getHost(), client.getPort());
 
         req_ctx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, WS_URL);
 
@@ -122,12 +124,12 @@ public class SyncClient {
         URL url = null;
 
         try {
-            url = new URL(String.format("http://%s:%s/api/SyncFiles?wsdl", client.getHost(), client.getPort()));
+            url = new URL(String.format("http://%s:%s/api/SyncServer?wsdl", client.getHost(), client.getPort()));
         } catch (MalformedURLException e) {
             log.error("error create url", e);
         }
 
-        QName qname = new QName("http://sync.jcryptosync.com/", "SyncFilesImplService");
+        QName qname = new QName("http://sync.jcryptosync.com/", "SyncServerService");
 
         Service service = Service.create(url, qname);
 
@@ -156,15 +158,38 @@ public class SyncClient {
     public void synchronizeFile(SecondClient client, CryptFile file, String rootId) {
         MetaData db = MetaData.getInstance();
 
-        CryptFile oldFile = (CryptFile) db.getFileMetadata().get(file.getUniqueId());
-        if(oldFile != null)
-            return;
+
+        Map<String, AbstractFile> localFiles = db.getFileMetadata();
+
+        CryptFile localFile = null;
+        if(localFiles.containsKey(file.getUniqueId())) {
+            localFile = (CryptFile) localFiles.get(file.getUniqueId());
+
+            if(localFile.getVector().isChange(file.getVector())) {
+                if(localFile.getVector().isConflict(file.getVector())) {
+                    log.error("conflict, file: " + file.getUniqueId());
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+
+        file.getVector().increaseSynchronization(client.getToken().getFirstClientId());
+
 
         if(file.getParentId().equals(rootId)) {
             file.setParentId(db.getRootFolderId());
         }
 
-        loadFile(client, file);
+        if(localFile != null) {
+            if (!Arrays.equals(file.getHash(), localFile.getHash())) {
+                FileOperations.deleteFile(localFile);
+                loadFile(client, file);
+            }
+        } else {
+            loadFile(client, file);
+        }
 
         db.getFileMetadata().put(file.getUniqueId(), file);
         db.save();

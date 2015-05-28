@@ -9,21 +9,12 @@ public class SyncPreferences {
     private Map<String, String> settingsString = new HashMap<>();
     private byte[] key;
 
-    private static final String CLIENT_ID = "client_id";
     private static final String GROUP_ID = "group_id";
 
     private SyncPreferences() {}
 
     public static SyncPreferences getInstance() {
         return instance;
-    }
-
-    public void setClientId(String clientId) {
-        settingsString.put(CLIENT_ID, clientId);
-    }
-
-    public String getClientId() {
-        return settingsString.get(CLIENT_ID);
     }
 
     public void setGroupId(String groupId) {

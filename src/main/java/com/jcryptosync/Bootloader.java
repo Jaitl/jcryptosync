@@ -25,7 +25,8 @@ public class Bootloader {
         generateContainerName();
         containerManager = VFSManager.createManager();
         jetty = new Jetty();
-        runJetty();generateIdClient();
+        runJetty();
+        generateIdClient();
 
         syncronizer = new SyncClient();
 
@@ -83,8 +84,9 @@ public class Bootloader {
     }
 
     private void generateIdClient() {
-        String idClient = UUID.randomUUID().toString();
-
-        SyncPreferences.getInstance().setClientId(idClient);
+        if(containerPreferences.getClientId() == null) {
+            String idClient = UUID.randomUUID().toString();
+            containerPreferences.setClientId(idClient);
+        }
     }
 }

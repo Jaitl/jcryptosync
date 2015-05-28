@@ -2,6 +2,7 @@ package com.jcryptosync.vfs.filesystem;
 
 import com.jcryptosync.data.UserPreferences;
 import com.jcryptosync.utils.CryptFactory;
+import com.jcryptosync.utils.HashUtils;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import io.milton.common.StreamUtils;
 import org.slf4j.Logger;
@@ -123,5 +124,8 @@ public class FileOperations {
         } catch (IOException e) {
             log.error("crypt error", e);
         }
+
+        byte[] hash = HashUtils.cumputeHashFile(file);
+        file.setHash(hash);
     }
 }

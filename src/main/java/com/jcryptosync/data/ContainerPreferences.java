@@ -13,6 +13,8 @@ public class ContainerPreferences {
     private static final String JETTY_PORT = "jetty-port";
     private static final String USER = "user";
     private static final String CONTAINER_NAME = "container-name";
+    private static final String CLIENT_ID = "client_id";
+
 
     public static ContainerPreferences getInstance() {
         return instance;
@@ -44,5 +46,13 @@ public class ContainerPreferences {
 
     public String getContainerName() {
         return (String) settings.get(CONTAINER_NAME);
+    }
+
+    public void setClientId(String clientId) {
+        settings.put(CLIENT_ID, clientId);
+    }
+
+    public String getClientId() {
+        return (String) settings.get(CLIENT_ID);
     }
 }

@@ -44,7 +44,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>SyncFiles</servlet-name>
-        <url-pattern>/api/SyncFiles</url-pattern>
+        <url-pattern>/api/SyncServer</url-pattern>
     </servlet-mapping>
 
     <session-config>

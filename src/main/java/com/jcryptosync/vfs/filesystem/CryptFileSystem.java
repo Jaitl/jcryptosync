@@ -1,5 +1,6 @@
 package com.jcryptosync.vfs.filesystem;
 
+import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.MetaData;
 import com.jcryptosync.vfs.webdav.AbstractFile;
 import com.jcryptosync.vfs.webdav.CryptFile;
@@ -38,6 +39,14 @@ public class CryptFileSystem {
     }
 
     public void createNewFile(CryptFile cryptFile, InputStream is) {
+
+        if(cryptFile.getLength() > 0) {
+
+            String clientId = ContainerPreferences.getInstance().getClientId();
+            cryptFile.getVector().increaseModification(clientId);
+            cryptFile.getVector().increaseSynchronization(clientId);
+        }
+
         fileMetadata.put(cryptFile.getUniqueId(), cryptFile);
 
         FileOperations.cryptFile(cryptFile, is);
@@ -66,6 +75,10 @@ public class CryptFileSystem {
 
         log.debug("file updated: " + cryptFile.getName());
 
+        String clientId = ContainerPreferences.getInstance().getClientId();
+        cryptFile.getVector().increaseModification(clientId);
+        cryptFile.getVector().increaseSynchronization(clientId);
+
         fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
         db.save();
     }
@@ -91,6 +104,12 @@ public class CryptFileSystem {
 
         file.setName(name);
 
+        if(file instanceof CryptFile) {
+            CryptFile cryptFile = (CryptFile) file;
+            String clientId = ContainerPreferences.getInstance().getClientId();
+            cryptFile.getVector().increaseModification(clientId);
+        }
+
         fileMetadata.replace(file.getUniqueId(), file);
         db.save();
     }
@@ -98,6 +117,13 @@ public class CryptFileSystem {
     public void moveFile(AbstractFile file, Folder folder, String name) {
         file.setParentId(folder.getUniqueId());
         file.setName(name);
+
+        if(file instanceof CryptFile) {
+            CryptFile cryptFile = (CryptFile) file;
+            String clientId = ContainerPreferences.getInstance().getClientId();
+            cryptFile.getVector().increaseModification(clientId);
+        }
+
         fileMetadata.replace(file.getUniqueId(), file);
 
         db.save();

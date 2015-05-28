@@ -18,6 +18,8 @@
  */
 package com.jcryptosync.vfs.webdav;
 
+import com.jcryptosync.data.ContainerPreferences;
+import com.jcryptosync.sync.VectorTimePair;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import io.milton.http.Auth;
 import io.milton.http.Range;
@@ -29,6 +31,7 @@ import io.milton.resource.CopyableResource;
 import io.milton.resource.GetableResource;
 import io.milton.resource.ReplaceableResource;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,14 +43,18 @@ public class CryptFile extends AbstractFile implements ReplaceableResource, Geta
     private String contentType;
     private byte[] key;
     private byte[] iv;
+    private VectorTimePair vector;
+    private byte[] hash;
 
-    public CryptFile() {}
+    public CryptFile() {
+    }
 
 
     public CryptFile(String name, String parentId, Long length, String contentType) {
         super(name, parentId);
         this.length = length;
         this.contentType = contentType;
+        vector = new VectorTimePair();
     }
 
     @Override
@@ -126,5 +133,21 @@ public class CryptFile extends AbstractFile implements ReplaceableResource, Geta
 
     public void setIv(byte[] iv) {
         this.iv = iv;
+    }
+
+    public VectorTimePair getVector() {
+        return vector;
+    }
+
+    public void setVector(VectorTimePair vector) {
+        this.vector = vector;
+    }
+
+    public byte[] getHash() {
+        return hash;
+    }
+
+    public void setHash(byte[] hash) {
+        this.hash = hash;
     }
 }

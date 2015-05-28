@@ -1,6 +1,7 @@
 package com.jcryptosync.sync;
 
 import com.google.gson.Gson;
+import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.MetaData;
 import com.jcryptosync.data.SyncPreferences;
 import com.jcryptosync.data.UserPreferences;
@@ -89,6 +90,14 @@ public class SyncServer implements SyncFiles {
 
             Path filePath = UserPreferences.getPathToCryptDir().resolve(file.getUniqueId());
             FileDataSource dataSource = new FileDataSource(filePath.toFile());
+
+            MetaData md = MetaData.getInstance();
+
+            CryptFile cryptFile = (CryptFile) md.getFileMetadata().get(file.getUniqueId());
+            cryptFile.getVector().increaseSynchronization(ContainerPreferences.getInstance().getClientId());
+            md.getFileMetadata().replace(cryptFile.getUniqueId(), cryptFile);
+
+            md.save();
 
             return new DataHandler(dataSource);
 
