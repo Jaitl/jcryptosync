@@ -2,7 +2,11 @@ package com.jcryptosync.domain;
 
 import com.jcryptosync.sync.SyncFiles;
 
+import java.util.stream.Stream;
+
 public class SecondClient {
+    public String idClient;
+    public String idSession;
     public String host;
     public SyncFiles syncFilesService;
     public int port;
@@ -46,5 +50,21 @@ public class SecondClient {
 
     public void setToken(Token token) {
         this.token = token;
+    }
+
+    public String getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(String idClient) {
+        this.idClient = idClient;
+    }
+
+    public String getIdSession() {
+        return idSession;
+    }
+
+    public void setIdSession(String idSession) {
+        this.idSession = idSession;
     }
 }

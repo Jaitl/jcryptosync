@@ -2,6 +2,7 @@ package com.jcryptosync.utils;
 
 import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.SyncPreferences;
+import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -71,28 +72,29 @@ public class SyncUtils {
         return generateSessionDigest(tokenString);
     }
 
-    public static boolean verifyToken(Token token, Map<String, String> sessions) {
+    public static boolean verifyToken(Token token, Map<String, SecondClient> clientMap) {
         byte[] digest = computeTokenDigest(token);
 
         // Проверка подписи
         if(!Arrays.equals(digest, token.getDigest()))
             return false;
 
-        String currentClientId = ContainerPreferences.getInstance().getClientId();
-
-        // Проверка id текущего клиента
-        if(!token.getFirstClientId().equals(currentClientId))
-            return false;
-
         // Проверка сессии
-        if(!sessions.containsKey(token.getSessionId()))
+        if(!clientMap.containsKey(token.getSessionId()))
             return false;
 
-        String clientId = sessions.get(token.getSessionId());
+        String currentClientId = ContainerPreferences.getInstance().getClientId();
+        String secondClientId = clientMap.get(token.getSessionId()).getIdClient();
 
-        // Проверка id второго клиента
-        if(!clientId.equals(token.getSecondClientId()))
+        if(token.getFirstClientId().equals(currentClientId)) {
+            if(!token.getSecondClientId().equals(secondClientId))
+                return false;
+        } else if(token.getSecondClientId().equals(currentClientId)) {
+            if(!token.getFirstClientId().equals(secondClientId))
+                return false;
+        } else {
             return false;
+        }
 
         Date dateCreate = null;
 

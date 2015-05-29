@@ -1,5 +1,9 @@
 package com.jcryptosync.data;
 
+import com.jcryptosync.domain.SecondClient;
+import com.jcryptosync.sync.SyncClient;
+import com.jcryptosync.sync.SyncServer;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +11,10 @@ public class SyncPreferences {
 
     private static final SyncPreferences instance = new SyncPreferences();
     private Map<String, String> settingsString = new HashMap<>();
+    private Map<String, SecondClient> clientMap = new HashMap<>();
     private byte[] key;
+    private SyncServer syncServer;
+    private SyncClient syncClient;
 
     private static final String GROUP_ID = "group_id";
 
@@ -31,5 +38,29 @@ public class SyncPreferences {
 
     public byte[] getKey() {
         return key;
+    }
+
+    public SyncServer getSyncServer() {
+        return syncServer;
+    }
+
+    public void setSyncServer(SyncServer syncServer) {
+        this.syncServer = syncServer;
+    }
+
+    public SyncClient getSyncClient() {
+        return syncClient;
+    }
+
+    public void setSyncClient(SyncClient syncClient) {
+        this.syncClient = syncClient;
+    }
+
+    public Map<String, SecondClient> getClientMap() {
+        return clientMap;
+    }
+
+    public void setClientMap(Map<String, SecondClient> clientMap) {
+        this.clientMap = clientMap;
     }
 }

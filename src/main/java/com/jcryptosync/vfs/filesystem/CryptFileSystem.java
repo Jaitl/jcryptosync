@@ -22,6 +22,7 @@ public class CryptFileSystem {
 
     private MetaData db;
     private Map<String, AbstractFile> fileMetadata;
+    private ChangeEvents changeEvents;
 
     private CryptFileSystem() {
         db = MetaData.getInstance();
@@ -55,6 +56,11 @@ public class CryptFileSystem {
 
         db.save();
         log.debug("added new file: " + cryptFile.getName());
+
+        if(cryptFile.getLength() > 0) {
+            if(changeEvents != null)
+                changeEvents.changeFile(cryptFile);
+        }
     }
 
     public void createNewFolder(Folder newFolder) {
@@ -62,6 +68,9 @@ public class CryptFileSystem {
 
         db.save();
         log.debug("added folder file: " + newFolder.getName());
+
+        if(changeEvents != null)
+            changeEvents.changeFolder(newFolder);
     }
 
     public void getFileContent(CryptFile cryptFile, OutputStream os) {
@@ -84,6 +93,9 @@ public class CryptFileSystem {
 
         fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
         db.save();
+
+        if(changeEvents != null)
+            changeEvents.changeFile(cryptFile);
     }
 
     public void deleteFolder(Folder folder) {
@@ -93,6 +105,9 @@ public class CryptFileSystem {
         db.save();
 
         log.debug("folder deleted: " + folder.getName());
+
+        if(changeEvents != null)
+            changeEvents.changeFolder(folder);
     }
 
     public void deleteFile(CryptFile cryptFile) {
@@ -104,6 +119,9 @@ public class CryptFileSystem {
         db.save();
 
         log.debug("file deleted: " + cryptFile.getName());
+
+        if(changeEvents != null)
+            changeEvents.changeFile(cryptFile);
     }
 
     public void renameFile(AbstractFile file, String name) {
@@ -117,6 +135,12 @@ public class CryptFileSystem {
             CryptFile cryptFile = (CryptFile) file;
             String clientId = ContainerPreferences.getInstance().getClientId();
             cryptFile.getVector().increaseModification(clientId);
+
+            if(changeEvents != null)
+                changeEvents.changeFile(cryptFile);
+        } else {
+            if(changeEvents != null)
+                changeEvents.changeFolder((Folder) file);
         }
 
         fileMetadata.replace(file.getUniqueId(), file);
@@ -133,6 +157,12 @@ public class CryptFileSystem {
             CryptFile cryptFile = (CryptFile) file;
             String clientId = ContainerPreferences.getInstance().getClientId();
             cryptFile.getVector().increaseModification(clientId);
+
+            if(changeEvents != null)
+                changeEvents.changeFile(cryptFile);
+        } else {
+            if(changeEvents != null)
+                changeEvents.changeFolder((Folder) file);
         }
 
         fileMetadata.replace(file.getUniqueId(), file);
@@ -161,5 +191,18 @@ public class CryptFileSystem {
         Optional<AbstractFile> file = getChildren(folder).stream().filter(f -> f.getName().equals(name)).findFirst();
 
         return file.orElse(null);
+    }
+
+    public ChangeEvents getChangeEvents() {
+        return changeEvents;
+    }
+
+    public void setChangeEvents(ChangeEvents changeEvents) {
+        this.changeEvents = changeEvents;
+    }
+
+    public interface ChangeEvents {
+        void changeFile(CryptFile file);
+        void changeFolder(Folder folder);
     }
 }

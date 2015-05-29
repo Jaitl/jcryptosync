@@ -6,18 +6,25 @@ import com.jcryptosync.data.MetaData;
 import com.jcryptosync.data.SyncPreferences;
 import com.jcryptosync.data.UserPreferences;
 import com.jcryptosync.domain.ListCryptFiles;
+import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.webdav.CryptFile;
+import com.jcryptosync.vfs.webdav.Folder;
 import org.apache.log4j.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.jws.WebService;
+import javax.servlet.http.HttpServletRequest;
+import javax.swing.plaf.synth.SynthButtonUI;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.soap.MTOM;
+import javax.xml.ws.spi.http.HttpExchange;
+import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +35,6 @@ import java.util.UUID;
 @WebService(endpointInterface = "com.jcryptosync.sync.SyncFiles")
 public class SyncServer implements SyncFiles {
     private static Logger log  = Logger.getLogger(SyncServer.class);
-    private Map<String, String> sessionsMap = new HashMap<>();
 
     @Resource
     WebServiceContext wsctx;
@@ -41,7 +47,10 @@ public class SyncServer implements SyncFiles {
             return null;
 
         String sessionId = UUID.randomUUID().toString();
-        sessionsMap.put(sessionId, clientId);
+        SecondClient secondClient = new SecondClient();
+        secondClient.setIdClient(clientId);
+        secondClient.setIdSession(sessionId);
+        SyncPreferences.getInstance().getClientMap().put(sessionId, secondClient);
 
         log.info(String.format("send sessionId: %s to %s", sessionId, clientId));
 
@@ -49,15 +58,21 @@ public class SyncServer implements SyncFiles {
     }
 
     @Override
-    public Token authentication(String sessionId, byte[] sessionDigest) {
+    public Token authentication(String sessionId, byte[] sessionDigest, int remotePort) {
 
-        if(sessionsMap.containsKey(sessionId)) {
+        Map<String, SecondClient> clientMap = SyncPreferences.getInstance().getClientMap();
+
+        if(clientMap.containsKey(sessionId)) {
             if (SyncUtils.verifySessionDigest(sessionId, sessionDigest)) {
-                String secondClientId = sessionsMap.get(sessionId);
+                String secondClientId = clientMap.get(sessionId).getIdClient();
 
                 log.info(String.format("authentication with %s, sessionId: %s", secondClientId, sessionId));
 
-                return SyncUtils.generateToken(secondClientId, sessionId);
+                Token token = SyncUtils.generateToken(secondClientId, sessionId);
+
+                setSecondClientData(sessionId, token, remotePort);
+
+                return token;
             }
         }
 
@@ -107,25 +122,79 @@ public class SyncServer implements SyncFiles {
     }
 
     @Override
+    public void updateFile(CryptFile file, String rootId) {
+        log.info("update file: " + file);
+
+        if(verifyToken()) {
+            Token token = getToken();
+            String sessionId = token.getSessionId();
+            SecondClient secondClient = SyncPreferences.getInstance().getClientMap().get(sessionId);
+
+            SyncPreferences.getInstance().getSyncClient().synchronizeFile(secondClient, file, rootId);
+        }
+    }
+
+    @Override
+    public void updateFolder(Folder folder) {
+        log.info("update folder: " + folder);
+    }
+
+    @Override
+    public void updateFiles(ListCryptFiles files) {
+        log.info("update files");
+
+        if(verifyToken()) {
+
+            Token token = getToken();
+            String sessionId = token.getSessionId();
+            SecondClient secondClient = SyncPreferences.getInstance().getClientMap().get(sessionId);
+
+            SyncPreferences.getInstance().getSyncClient().syncAllFiles(files, secondClient);
+        }
+    }
+
+    @Override
     public String test(String name) {
         return String.format("Hello, %s! I'm JCryptoSync", name);
     }
 
-    private boolean verifyToken() {
-
+    private Token getToken() {
         MessageContext mctx = wsctx.getMessageContext();
 
         Map http_headers = (Map) mctx.get(MessageContext.HTTP_REQUEST_HEADERS);
         List tokenLing = (List) http_headers.get("token");
 
         if(tokenLing == null)
-            return false;
+            return null;
 
         String jsonToken = tokenLing.get(0).toString();
 
         Gson gson = new Gson();
-        Token token = gson.fromJson(jsonToken, Token.class);
+        return gson.fromJson(jsonToken, Token.class);
+    }
 
-        return SyncUtils.verifyToken(token, sessionsMap);
+    private boolean verifyToken() {
+
+        Token token = getToken();
+        if(token == null)
+            return false;
+
+        Map<String, SecondClient> clientMap = SyncPreferences.getInstance().getClientMap();
+        return SyncUtils.verifyToken(token, clientMap);
+    }
+
+    private void setSecondClientData(String sessionId, Token token, int remotePort) {
+        MessageContext mc = wsctx.getMessageContext();
+        HttpServletRequest req = (HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST);
+
+        String remoteHost = req.getRemoteHost();
+
+        SecondClient client = SyncPreferences.getInstance().getClientMap().get(sessionId);
+        client.setHost(remoteHost);
+        client.setPort(remotePort);
+        client.setToken(token);
+        SyncClient syncClient = SyncPreferences.getInstance().getSyncClient();
+        client.setSyncFilesService(syncClient.connectToClient(client));
+        syncClient.addTokenToHeader(client, token);
     }
 }
