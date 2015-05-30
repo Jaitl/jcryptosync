@@ -95,6 +95,17 @@ public class CryptFileSystem {
             changeEvents.changeFile(cryptFile);
     }
 
+    public void copyFile(CryptFile cryptFile, Folder folder, String newName) {
+        CryptFile newFile = FileOperations.copyFile(cryptFile, newName);
+        newFile.setParentId(folder.getUniqueId());
+
+        fileMetadata.put(newFile.getUniqueId(), newFile);
+        db.save();
+
+        if(changeEvents != null && newFile.getLength() > 0)
+            changeEvents.changeFile(newFile);
+    }
+
     public void deleteFolder(Folder folder) {
         folder.setModDate(new Date());
         folder.setDeleted(true);

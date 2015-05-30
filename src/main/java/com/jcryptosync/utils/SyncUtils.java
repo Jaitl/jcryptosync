@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Map;
 
 public class SyncUtils {
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     public static boolean verifySessionDigest(String sessionId, byte[] sessionDigest) {
         byte[] digest = generateSessionDigest(sessionId);
@@ -115,5 +115,18 @@ public class SyncUtils {
 
     }
 
-    //Hex.encodeHexString()
+    public static String generateName(String oldName, Date dateMod) {
+        String date = formatter.format(dateMod);
+        String newName;
+
+        int indexDot = oldName.lastIndexOf('.');
+
+        if(indexDot > 0) {
+            newName = oldName.substring(0, indexDot) + "(" + date + ")." + oldName.substring(indexDot + 1, oldName.length());
+        } else {
+            newName = oldName + "(" + date + ")";
+        }
+
+        return newName;
+    }
 }

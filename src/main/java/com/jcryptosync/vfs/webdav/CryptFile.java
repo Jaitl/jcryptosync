@@ -93,6 +93,9 @@ public class CryptFile extends AbstractFile implements ReplaceableResource, Geta
     @Override
     public void copyTo(CollectionResource toCollection, String name) throws NotAuthorizedException, BadRequestException, ConflictException {
         log.debug("copy to: " + toCollection.getName());
+
+        CryptFileSystem fileSystem = CryptFileSystem.getInstance();
+        fileSystem.copyFile(this, (Folder)toCollection, name);
     }
 
     @Override

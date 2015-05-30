@@ -3,6 +3,7 @@ package com.jcryptosync.vfs.filesystem;
 import com.jcryptosync.data.UserPreferences;
 import com.jcryptosync.utils.CryptFactory;
 import com.jcryptosync.utils.HashUtils;
+import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import io.milton.common.StreamUtils;
 import org.slf4j.Logger;
@@ -22,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.util.Date;
+import java.util.UUID;
 
 public class FileOperations {
     protected static Logger log = LoggerFactory.getLogger(FileOperations.class);
@@ -35,7 +38,7 @@ public class FileOperations {
         file.setIv(ivByte);
 
         try {
-            if(is.available() > 0) {
+            if (is.available() > 0) {
                 saveCryptFile(file, is);
             }
         } catch (IOException e) {
@@ -67,7 +70,7 @@ public class FileOperations {
             log.error("decrypt error", e);
         }
 
-        try(CipherOutputStream cos = new CipherOutputStream(os, cipher)) {
+        try (CipherOutputStream cos = new CipherOutputStream(os, cipher)) {
             StreamUtils.readTo(is, cos);
 
         } catch (IOException e) {
@@ -118,7 +121,7 @@ public class FileOperations {
             log.error("crypt error", e);
         }
 
-        try(CipherInputStream is = new CipherInputStream(inIs, cipher)) {
+        try (CipherInputStream is = new CipherInputStream(inIs, cipher)) {
             StreamUtils.readTo(is, os);
 
         } catch (IOException e) {
@@ -127,5 +130,59 @@ public class FileOperations {
 
         byte[] hash = HashUtils.cumputeHashFile(file);
         file.setHash(hash);
+    }
+
+    public static CryptFile copyFile(CryptFile cryptFile, String name) {
+        CryptFile newFile = new CryptFile();
+        newFile.setId(UUID.randomUUID().toString());
+        newFile.setCreatedDate(new Date());
+        newFile.setModDate(new Date());
+        newFile.setDeleted(false);
+        newFile.setLength(cryptFile.getLength());
+        newFile.setContentType(cryptFile.getContentType());
+        newFile.setParentId(cryptFile.getParentId());
+
+        String newName;
+
+        if (name != null) {
+            newName = name;
+        } else {
+            newName = SyncUtils.generateName(cryptFile.getName(), cryptFile.getModDate());
+        }
+
+        newFile.setName(newName);
+
+        SecretKey key = CryptFactory.generateKey();
+
+        newFile.setKey(key.getEncoded());
+
+        byte[] ivByte = CryptFactory.generateRandomIV();
+        newFile.setIv(ivByte);
+
+        copyFileData(cryptFile, newFile);
+
+        return newFile;
+    }
+
+    private static void copyFileData(CryptFile oldFile, CryptFile newFile) {
+        Path pathToOldFile = UserPreferences.getPathToCryptDir().resolve(oldFile.getUniqueId());
+        Path pathToNewFile = UserPreferences.getPathToCryptDir().resolve(newFile.getUniqueId());
+
+        Cipher inputCipher = CryptFactory.createCipher();
+        Cipher outputCipher = CryptFactory.createCipher();
+
+        try {
+            inputCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(oldFile.getKey(), "AES"), new IvParameterSpec(oldFile.getIv()));
+            outputCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(newFile.getKey(), "AES"), new IvParameterSpec(newFile.getIv()));
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+            log.error("decrypt error", e);
+        }
+
+        try(CipherInputStream cis = new CipherInputStream(Files.newInputStream(pathToOldFile, StandardOpenOption.READ), inputCipher);
+        CipherOutputStream cos = new CipherOutputStream(Files.newOutputStream(pathToNewFile, StandardOpenOption.CREATE_NEW), outputCipher)) {
+            StreamUtils.readTo(cis, cos);
+        } catch (IOException e) {
+            log.error("copy error", e);
+        }
     }
 }
