@@ -199,7 +199,6 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
     public void synchronizeFile(SecondClient client, CryptFile file, String rootId) {
         MetaData db = MetaData.getInstance();
 
-
         Map<String, AbstractFile> localFiles = db.getFileMetadata();
 
         CryptFile localFile = null;
@@ -216,8 +215,12 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
             }
         }
 
-        file.getVector().increaseSynchronization(client.getToken().getFirstClientId());
-
+        String currentId = ContainerPreferences.getInstance().getClientId();
+        if(client.token.getFirstClientId().equals(currentId)) {
+            file.getVector().increaseSynchronization(client.getToken().getSecondClientId());
+        } else {
+            file.getVector().increaseSynchronization(client.getToken().getFirstClientId());
+        }
 
         if(file.getParentId().equals(rootId)) {
             file.setParentId(db.getRootFolderId());
@@ -241,8 +244,15 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
             FileOperations.deleteFile(file);
         }
 
-        db.getFileMetadata().put(file.getUniqueId(), file);
+        if(localFile == null) {
+            db.getFileMetadata().put(file.getUniqueId(), file);
+        } else {
+            db.getFileMetadata().replace(file.getUniqueId(), file);
+        }
+
         db.save();
+
+        client.getSyncFilesService().fileIsSynced(file);
     }
 
     public void loadFile(SecondClient client, CryptFile file) {

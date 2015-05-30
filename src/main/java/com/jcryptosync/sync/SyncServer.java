@@ -106,14 +106,6 @@ public class SyncServer implements SyncFiles {
             Path filePath = UserPreferences.getPathToCryptDir().resolve(file.getUniqueId());
             FileDataSource dataSource = new FileDataSource(filePath.toFile());
 
-            MetaData md = MetaData.getInstance();
-
-            CryptFile cryptFile = (CryptFile) md.getFileMetadata().get(file.getUniqueId());
-            cryptFile.getVector().increaseSynchronization(ContainerPreferences.getInstance().getClientId());
-            md.getFileMetadata().replace(cryptFile.getUniqueId(), cryptFile);
-
-            md.save();
-
             return new DataHandler(dataSource);
 
         }
@@ -154,6 +146,17 @@ public class SyncServer implements SyncFiles {
             SecondClient secondClient = SyncPreferences.getInstance().getClientMap().get(sessionId);
 
             SyncPreferences.getInstance().getSyncClient().syncAllFiles(files, secondClient);
+        }
+    }
+
+    @Override
+    public void fileIsSynced(CryptFile file) {
+        if(verifyToken()) {
+            MetaData md = MetaData.getInstance();
+
+            CryptFile cryptFile = (CryptFile) md.getFileMetadata().get(file.getUniqueId());
+            cryptFile.getVector().increaseSynchronization(ContainerPreferences.getInstance().getClientId());
+            md.getFileMetadata().replace(cryptFile.getUniqueId(), cryptFile);
         }
     }
 

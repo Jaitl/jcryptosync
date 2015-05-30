@@ -35,5 +35,8 @@ public interface SyncFiles {
     void updateFiles(ListCryptFiles files);
 
     @WebMethod
+    void fileIsSynced(CryptFile file);
+
+    @WebMethod
     String test(String name);
 }

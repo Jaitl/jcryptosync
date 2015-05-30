@@ -84,9 +84,9 @@ public class Bootloader {
     }
 
     private void generateIdClient() {
-        if(containerPreferences.getClientId() == null) {
+        //if(containerPreferences.getClientId() == null) {
             String idClient = UUID.randomUUID().toString();
             containerPreferences.setClientId(idClient);
-        }
+        //}
     }
 }

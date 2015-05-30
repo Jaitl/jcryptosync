@@ -42,24 +42,22 @@ public class CryptFileSystem {
 
     public void createNewFile(CryptFile cryptFile, InputStream is) {
 
-        if(cryptFile.getLength() > 0) {
+        String clientId = ContainerPreferences.getInstance().getClientId();
+        cryptFile.getVector().increaseSynchronization(clientId);
 
-            String clientId = ContainerPreferences.getInstance().getClientId();
+        if(cryptFile.getLength() > 0) {
             cryptFile.getVector().increaseModification(clientId);
-            cryptFile.getVector().increaseSynchronization(clientId);
         }
 
         fileMetadata.put(cryptFile.getUniqueId(), cryptFile);
 
         FileOperations.cryptFile(cryptFile, is);
 
-
         db.save();
         log.debug("added new file: " + cryptFile.getName());
 
-        if(cryptFile.getLength() > 0) {
-            if(changeEvents != null)
-                changeEvents.changeFile(cryptFile);
+        if(changeEvents != null && cryptFile.getLength() > 0) {
+            changeEvents.changeFile(cryptFile);
         }
     }
 
@@ -89,12 +87,11 @@ public class CryptFileSystem {
 
         String clientId = ContainerPreferences.getInstance().getClientId();
         cryptFile.getVector().increaseModification(clientId);
-        cryptFile.getVector().increaseSynchronization(clientId);
 
         fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
         db.save();
 
-        if(changeEvents != null)
+        if(changeEvents != null && cryptFile.getLength() > 0)
             changeEvents.changeFile(cryptFile);
     }
 
@@ -120,7 +117,7 @@ public class CryptFileSystem {
 
         log.debug("file deleted: " + cryptFile.getName());
 
-        if(changeEvents != null)
+        if(changeEvents != null && cryptFile.getLength() > 0)
             changeEvents.changeFile(cryptFile);
     }
 
@@ -136,7 +133,7 @@ public class CryptFileSystem {
             String clientId = ContainerPreferences.getInstance().getClientId();
             cryptFile.getVector().increaseModification(clientId);
 
-            if(changeEvents != null)
+            if(changeEvents != null && cryptFile.getLength() > 0)
                 changeEvents.changeFile(cryptFile);
         } else {
             if(changeEvents != null)
@@ -158,7 +155,7 @@ public class CryptFileSystem {
             String clientId = ContainerPreferences.getInstance().getClientId();
             cryptFile.getVector().increaseModification(clientId);
 
-            if(changeEvents != null)
+            if(changeEvents != null && cryptFile.getLength() > 0)
                 changeEvents.changeFile(cryptFile);
         } else {
             if(changeEvents != null)
