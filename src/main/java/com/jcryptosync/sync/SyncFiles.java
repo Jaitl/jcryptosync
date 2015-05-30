@@ -29,7 +29,7 @@ public interface SyncFiles {
     void updateFile(CryptFile file, String rootId);
 
     @WebMethod
-    void updateFolder(Folder folder);
+    void updateFolder(Folder folder, String rootId);
 
     @WebMethod
     void updateFiles(ListCryptFiles files);

@@ -135,8 +135,12 @@ public class SyncServer implements SyncFiles {
     }
 
     @Override
-    public void updateFolder(Folder folder) {
+    public void updateFolder(Folder folder, String rootId) {
         log.info("update folder: " + folder);
+
+        if(verifyToken()) {
+            SyncPreferences.getInstance().getSyncClient().synchronizeFolder(folder, rootId);
+        }
     }
 
     @Override

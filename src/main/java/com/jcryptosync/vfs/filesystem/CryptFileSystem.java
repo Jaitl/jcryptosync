@@ -180,6 +180,7 @@ public class CryptFileSystem {
 
             List<AbstractFile> children = fileMetadata.values().stream()
                     .filter(f -> folder.getUniqueId().equals(f.getParentId()))
+                    .filter(f -> !f.isDeleted())
                     .collect(Collectors.toList());
 
             return children;
@@ -188,7 +189,10 @@ public class CryptFileSystem {
 
     public AbstractFile getChild(Folder folder, String name) {
 
-        Optional<AbstractFile> file = getChildren(folder).stream().filter(f -> f.getName().equals(name)).findFirst();
+        Optional<AbstractFile> file = getChildren(folder).stream()
+                .filter(f -> f.getName().equals(name))
+                .filter(f -> !f.isDeleted())
+                .findFirst();
 
         return file.orElse(null);
     }

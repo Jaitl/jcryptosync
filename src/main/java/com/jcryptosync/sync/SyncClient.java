@@ -123,8 +123,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
                 listCryptFiles.getFileList().forEach(f -> {
                     if (f instanceof CryptFile)
                         synchronizeFile(client, (CryptFile) f, listCryptFiles.getRootId());
-                    //else
-                    // synchronizeFolder((Folder) f, listCryptFiles.getRootId());
+                    else
+                        synchronizeFolder((Folder) f, listCryptFiles.getRootId());
                 });
 
                 Runnable runnable = () -> {
@@ -141,8 +141,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         listCryptFiles.getFileList().forEach(f -> {
             if (f instanceof CryptFile)
                 synchronizeFile(client, (CryptFile) f, listCryptFiles.getRootId());
-            //else
-            // synchronizeFolder((Folder) f, listCryptFiles.getRootId());
+            else
+                synchronizeFolder((Folder) f, listCryptFiles.getRootId());
         });
     }
 
@@ -183,17 +183,17 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
         MetaData db = MetaData.getInstance();
 
-        Folder oldFolder = (Folder) db.getFileMetadata().get(folder.getUniqueId());
-        if(oldFolder != null)
-            return;
-
         if(folder.getParentId().equals(rootId)) {
             folder.setParentId(db.getRootFolderId());
         }
 
-        db.getFileMetadata().put(folder.getUniqueId(), folder);
+        Folder oldFolder = (Folder) db.getFileMetadata().get(folder.getUniqueId());
+        if (oldFolder != null) {
+            db.getFileMetadata().replace(folder.getUniqueId(), folder);
+        } else {
+            db.getFileMetadata().put(folder.getUniqueId(), folder);
+        }
         db.save();
-
     }
 
     public void synchronizeFile(SecondClient client, CryptFile file, String rootId) {
@@ -274,8 +274,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
         Runnable runnable = () -> {
             Collection<SecondClient> clientList = SyncPreferences.getInstance().getClientMap().values();
-
-            clientList.forEach((c) -> c.getSyncFilesService().updateFolder(folder));
+            String rootId = MetaData.getInstance().getRootFolderId();
+            clientList.forEach((c) -> c.getSyncFilesService().updateFolder(folder, rootId));
         };
 
         new Thread(runnable).start();
