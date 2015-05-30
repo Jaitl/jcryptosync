@@ -1,6 +1,8 @@
 package com.jcryptosync.vfs.filesystem;
 
+import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.UserPreferences;
+import com.jcryptosync.sync.VectorTimePair;
 import com.jcryptosync.utils.CryptFactory;
 import com.jcryptosync.utils.HashUtils;
 import com.jcryptosync.utils.SyncUtils;
@@ -141,6 +143,10 @@ public class FileOperations {
         newFile.setLength(cryptFile.getLength());
         newFile.setContentType(cryptFile.getContentType());
         newFile.setParentId(cryptFile.getParentId());
+
+        newFile.setVector(new VectorTimePair());
+        newFile.getVector().increaseModification(ContainerPreferences.getInstance().getClientId());
+        newFile.getVector().increaseSynchronization(ContainerPreferences.getInstance().getClientId());
 
         String newName;
 
