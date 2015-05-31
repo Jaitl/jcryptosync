@@ -42,6 +42,7 @@ public class CryptFileSystem {
 
     public void createNewFile(CryptFile cryptFile, InputStream is) {
 
+
         String clientId = ContainerPreferences.getInstance().getClientId();
         cryptFile.getVector().increaseSynchronization(clientId);
 
@@ -49,9 +50,10 @@ public class CryptFileSystem {
             cryptFile.getVector().increaseModification(clientId);
         }
 
+        FileOperations.cryptFile(cryptFile, is);
+
         fileMetadata.put(cryptFile.getUniqueId(), cryptFile);
 
-        FileOperations.cryptFile(cryptFile, is);
 
         db.save();
         log.debug("added new file: " + cryptFile.getName());
@@ -73,7 +75,8 @@ public class CryptFileSystem {
 
     public void getFileContent(CryptFile cryptFile, OutputStream os) {
 
-        FileOperations.decryptFile(cryptFile, os);
+        if(cryptFile.getLength() > 0)
+            FileOperations.decryptFile(cryptFile, os);
 
         log.debug("get file content: " + cryptFile.getName());
     }

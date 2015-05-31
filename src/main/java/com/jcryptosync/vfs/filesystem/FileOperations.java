@@ -74,6 +74,7 @@ public class FileOperations {
 
         try (CipherOutputStream cos = new CipherOutputStream(os, cipher)) {
             StreamUtils.readTo(is, cos);
+            is.close();
 
         } catch (IOException e) {
             log.error("decrypt error", e);
@@ -99,7 +100,12 @@ public class FileOperations {
             deleteFile(file);
         }
 
-        saveCryptFile(file, is);
+        try {
+            if(is.available() > 0)
+                saveCryptFile(file, is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void saveCryptFile(CryptFile file, InputStream inIs) {
@@ -125,7 +131,7 @@ public class FileOperations {
 
         try (CipherInputStream is = new CipherInputStream(inIs, cipher)) {
             StreamUtils.readTo(is, os);
-
+            os.close();
         } catch (IOException e) {
             log.error("crypt error", e);
         }
