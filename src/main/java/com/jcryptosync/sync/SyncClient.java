@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -208,7 +209,11 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
             if(localFile.getVector().isChange(file.getVector())) {
                 if(localFile.getVector().isConflict(file.getVector())) {
                     log.error("conflict, file: " + file.getUniqueId());
-                    return;
+
+                    CryptFile copyFile = FileOperations.copyFile(localFile, null);
+                    db.getFileMetadata().put(copyFile.getUniqueId(), copyFile);
+                    db.save();
+                    client.getSyncFilesService().updateFile(copyFile, ContainerPreferences.getInstance().getClientId());
                 }
             } else {
                 return;

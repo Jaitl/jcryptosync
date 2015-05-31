@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Map;
 
 public class SyncUtils {
-    public static final SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    public static final SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH-mm-ss");
 
     public static boolean verifySessionDigest(String sessionId, byte[] sessionDigest) {
         byte[] digest = generateSessionDigest(sessionId);

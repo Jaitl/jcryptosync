@@ -193,11 +193,26 @@ public class FileOperations {
             log.error("decrypt error", e);
         }
 
-        try(CipherInputStream cis = new CipherInputStream(Files.newInputStream(pathToOldFile, StandardOpenOption.READ), inputCipher);
-        CipherOutputStream cos = new CipherOutputStream(Files.newOutputStream(pathToNewFile, StandardOpenOption.CREATE_NEW), outputCipher)) {
+        CipherInputStream cis = null;
+        CipherOutputStream cos = null;
+        try {
+            cis = new CipherInputStream(Files.newInputStream(pathToOldFile, StandardOpenOption.READ), inputCipher);
+            cos = new CipherOutputStream(Files.newOutputStream(pathToNewFile, StandardOpenOption.CREATE_NEW), outputCipher);
+
             StreamUtils.readTo(cis, cos);
         } catch (IOException e) {
             log.error("copy error", e);
+        } finally {
+            try {
+                if(cis != null)
+                    cis.close();
+
+                if(cos != null)
+                    cos.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
