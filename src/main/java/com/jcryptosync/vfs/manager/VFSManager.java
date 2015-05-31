@@ -15,7 +15,7 @@ public abstract class VFSManager {
         ContainerPreferences preferences = ContainerPreferences.getInstance();
 
         int port = preferences.getJettyPort();
-        pathToWebDavServer = String.format("http://localhost:%s/webdav", port);
+        pathToWebDavServer = String.format("http://127.0.0.1:%s/webdav", port);
 
         user = preferences.getUser();
     }
