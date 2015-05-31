@@ -173,6 +173,9 @@ public class FileOperations {
 
         copyFileData(cryptFile, newFile);
 
+        byte[] hash = HashUtils.cumputeHashFile(newFile);
+        newFile.setHash(hash);
+
         return newFile;
     }
 

@@ -124,6 +124,10 @@ public class CryptFileSystem {
     public void deleteFile(CryptFile cryptFile) {
         cryptFile.setModDate(new Date());
         cryptFile.setDeleted(true);
+
+        String clientId = ContainerPreferences.getInstance().getClientId();
+        cryptFile.getVector().increaseModification(clientId);
+
         fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
 
         FileOperations.deleteFile(cryptFile);
