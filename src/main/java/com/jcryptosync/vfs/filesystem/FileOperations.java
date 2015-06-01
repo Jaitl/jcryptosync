@@ -1,7 +1,7 @@
 package com.jcryptosync.vfs.filesystem;
 
-import com.jcryptosync.data.ContainerPreferences;
-import com.jcryptosync.data.UserPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.sync.VectorTimePair;
 import com.jcryptosync.utils.CryptFactory;
 import com.jcryptosync.utils.SyncUtils;
@@ -22,10 +22,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -37,7 +34,7 @@ public class FileOperations {
 
         file.setKey(key.getEncoded());
 
-        byte[] ivByte = CryptFactory.generateRandomIV();
+        byte[] ivByte = generateRandomIV();
         file.setIv(ivByte);
 
         try {
@@ -187,7 +184,7 @@ public class FileOperations {
 
         newFile.setKey(key.getEncoded());
 
-        byte[] ivByte = CryptFactory.generateRandomIV();
+        byte[] ivByte = generateRandomIV();
         newFile.setIv(ivByte);
 
         byte[] hash = copyFileData(cryptFile, newFile);
@@ -245,5 +242,14 @@ public class FileOperations {
         }
 
         return digest.digest();
+    }
+
+    public static byte[] generateRandomIV() {
+        byte[] ivBytes = new byte[16];
+
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(ivBytes);
+
+        return ivBytes;
     }
 }

@@ -1,6 +1,6 @@
 package com.jcryptosync.vfs.manager;
 
-import com.jcryptosync.data.ContainerPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
 import com.jcryptosync.exceptoins.ContainerMountException;
 
 import java.io.IOException;

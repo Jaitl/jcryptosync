@@ -1,14 +1,13 @@
 package com.jcryptosync.sync;
 
 import com.google.gson.Gson;
-import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.MetaData;
-import com.jcryptosync.data.SyncPreferences;
-import com.jcryptosync.data.UserPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.data.preferences.SyncPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.domain.ListCryptFiles;
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
-import com.jcryptosync.utils.SecurityUtils;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import com.jcryptosync.vfs.filesystem.FileOperations;
@@ -47,7 +46,7 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
         for(; startPort <= endPort; startPort++) {
             if(currentPort != startPort) {
-                if (SecurityUtils.portIsOpen(startPort)) {
+                if (SyncUtils.portIsOpen(startPort)) {
                     clientList.add(new SecondClient("localhost", startPort));
 
                     log.info("found client, port: " + startPort);

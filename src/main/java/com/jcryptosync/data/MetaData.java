@@ -1,5 +1,6 @@
 package com.jcryptosync.data;
 
+import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.vfs.webdav.AbstractFile;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;

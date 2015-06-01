@@ -6,7 +6,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 public class CryptFactory {
     public static SecretKey generateKey() {
@@ -22,15 +21,6 @@ public class CryptFactory {
         SecretKey secretKey = keyGen.generateKey();
 
         return secretKey;
-    }
-
-    public static byte[] generateRandomIV() {
-        byte[] ivBytes = new byte[16];
-
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(ivBytes);
-
-        return ivBytes;
     }
 
     public static Cipher createCipher() {

@@ -1,10 +1,10 @@
 package com.jcryptosync;
 
-import com.jcryptosync.data.ContainerPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.exceptoins.ContainerMountException;
 import com.jcryptosync.sync.SyncClient;
-import com.jcryptosync.utils.SecurityUtils;
+import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.manager.VFSManager;
 
 import java.util.UUID;
@@ -65,12 +65,12 @@ public class Bootloader {
     }
 
     private void generateUser() {
-        User user = SecurityUtils.generateRandomUser();
+        User user = SyncUtils.generateRandomUser();
         containerPreferences.setUser(user);
     }
 
     private void findPort() {
-        int port = SecurityUtils.getFreePort();
+        int port = SyncUtils.getFreePort();
         System.out.println("find port: " + port);
         containerPreferences.setJettyPort(port);
     }

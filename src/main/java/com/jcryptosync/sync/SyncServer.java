@@ -1,10 +1,10 @@
 package com.jcryptosync.sync;
 
 import com.google.gson.Gson;
-import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.MetaData;
-import com.jcryptosync.data.SyncPreferences;
-import com.jcryptosync.data.UserPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.data.preferences.SyncPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.domain.ListCryptFiles;
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;

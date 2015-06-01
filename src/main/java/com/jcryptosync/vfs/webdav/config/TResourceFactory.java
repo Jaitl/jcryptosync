@@ -18,7 +18,7 @@
  */
 package com.jcryptosync.vfs.webdav.config;
 
-import com.jcryptosync.data.ContainerPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import com.jcryptosync.vfs.webdav.Folder;

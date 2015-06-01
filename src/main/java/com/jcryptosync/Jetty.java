@@ -1,6 +1,6 @@
 package com.jcryptosync;
 
-import com.jcryptosync.data.ContainerPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 

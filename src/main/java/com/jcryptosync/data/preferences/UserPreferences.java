@@ -1,4 +1,4 @@
-package com.jcryptosync.data;
+package com.jcryptosync.data.preferences;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,16 +46,8 @@ public class UserPreferences {
         return path;
     }
 
-    public static Path getPathToFilesDir() {
-        return getPathToDir("Files");
-    }
-
     public static Path getPathToCryptDir() {
         return getPathToDir("Crypt");
-    }
-
-    public static Path getPathToWorkDir() {
-        return getPathToContainer().getParent();
     }
 
     public static int getStartPort() {

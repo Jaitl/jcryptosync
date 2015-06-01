@@ -1,20 +1,28 @@
 package com.jcryptosync.utils;
 
-import com.jcryptosync.data.ContainerPreferences;
-import com.jcryptosync.data.SyncPreferences;
+import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.data.preferences.SyncPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
+import com.jcryptosync.domain.User;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 public class SyncUtils {
     public static final SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH-mm-ss");
@@ -128,5 +136,69 @@ public class SyncUtils {
         }
 
         return newName;
+    }
+
+    public static User generateRandomUser() {
+        String name = UUID.randomUUID().toString();
+        String password = UUID.randomUUID().toString();
+
+        return new User(name, password);
+    }
+
+    public static int getFreePort() {
+        int port = UserPreferences.getStartPort();
+        int end = UserPreferences.getEndPort();
+
+        for(; port < end; port++) {
+            if(!portIsOpen(port))
+                break;
+        }
+
+        return port;
+    }
+
+    public static boolean portIsOpen(int port) {
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("localhost", port), 200);
+            socket.close();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    public static byte[] computeSHA256(byte[] data) {
+
+        MessageDigest messageDigest = null;
+        try {
+            messageDigest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return messageDigest.digest(data);
+    }
+
+    public static byte[] computeKey(String password, byte[] masterkey) {
+
+        MessageDigest messageDigest = null;
+        try {
+            messageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        byte[] bytePass = messageDigest.digest(password.getBytes());
+
+        byte[] unionPass = ArrayUtils.addAll(bytePass, masterkey);
+
+        return computeSHA256(unionPass);
+    }
+
+    public static String computeGroupId(byte[] masterKey) {
+        byte[] hash = computeSHA256(masterKey);
+
+        return "group-" + Hex.encodeHexString(hash);
     }
 }

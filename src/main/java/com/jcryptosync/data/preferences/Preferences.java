@@ -1,4 +1,4 @@
-package com.jcryptosync.data;
+package com.jcryptosync.data.preferences;
 
 import org.slf4j.LoggerFactory;
 

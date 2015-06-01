@@ -1,4 +1,4 @@
-package com.jcryptosync.data;
+package com.jcryptosync.data.preferences;
 
 import com.jcryptosync.domain.User;
 
@@ -16,13 +16,6 @@ public class ContainerPreferences {
     private static final String CLIENT_ID = "client_id";
 
 
-    public static ContainerPreferences getInstance() {
-        return instance;
-    }
-
-    private ContainerPreferences() {
-
-    }
 
     public void setJettyPort(int port) {
         settings.put(JETTY_PORT, port);

@@ -1,12 +1,12 @@
 package com.jcryptosync.ui.login;
 
 import com.jcryptosync.data.MasterKeyManager;
-import com.jcryptosync.data.SyncPreferences;
-import com.jcryptosync.data.UserPreferences;
+import com.jcryptosync.data.preferences.SyncPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.domain.MainKey;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.ui.LoginSceneFactory;
-import com.jcryptosync.utils.HashUtils;
+import com.jcryptosync.utils.SyncUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -89,10 +89,10 @@ public class CreateKeyController extends BaseLoginController {
 
                 MainKey mainKey = keyManager.loadPrimaryKeyFromFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
 
-                String groupId = HashUtils.computeGroupId(mainKey.getKey());
+                String groupId = SyncUtils.computeGroupId(mainKey.getKey());
                 SyncPreferences.getInstance().setGroupId(groupId);
 
-                byte[] key = HashUtils.computeKey(firstPassword.getText(), mainKey.getKey());
+                byte[] key = SyncUtils.computeKey(firstPassword.getText(), mainKey.getKey());
                 SyncPreferences.getInstance().setKey(key);
 
                 showVFSDialog();
