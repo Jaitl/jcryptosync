@@ -15,6 +15,11 @@ public class ContainerPreferences {
     private static final String CONTAINER_NAME = "container-name";
     private static final String CLIENT_ID = "client_id";
 
+    public static ContainerPreferences getInstance() {
+        return instance;
+    }
+
+    private ContainerPreferences() {}
 
 
     public void setJettyPort(int port) {
