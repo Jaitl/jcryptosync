@@ -1,16 +1,27 @@
 package com.jcryptosync.ui.login;
 
+import com.jcryptosync.data.preferences.SyncPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
+import com.jcryptosync.domain.MainKey;
+import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.ui.container.ContainerController;
+import com.jcryptosync.utils.SyncUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public abstract class BaseLoginController {
@@ -39,12 +50,83 @@ public abstract class BaseLoginController {
 
     @FXML
     protected abstract void changeControllerAction(ActionEvent event);
+    protected abstract MainKey computeMainKey() throws IOException, NoCorrectPasswordException;
+
     @FXML
-    protected abstract void selectKeyAction();
+    protected void selectKeyAction() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор расположения ключа");
+
+        Path initDir = UserPreferences.getPathToKey().getParent();
+
+        if(initDir != null) {
+            if (Files.exists(initDir)) {
+                fileChooser.setInitialDirectory(initDir.toFile());
+            }
+        }
+
+        File key = fileChooser.showOpenDialog(null);
+
+        if(key != null) {
+            pathToKey.setText(key.getPath());
+            UserPreferences.setPathToKey(key.getPath());
+        }
+    }
+
     @FXML
-    protected abstract void selectContainerAction();
+    protected void selectContainerAction() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор расположения контейнера");
+
+        Path initDir = UserPreferences.getPathToContainer().getParent();
+
+        if(initDir != null) {
+            if (Files.exists(initDir)) {
+                fileChooser.setInitialDirectory(initDir.toFile());
+            }
+        }
+
+        File container;
+
+        if(isNewContainer.isSelected())
+            container = fileChooser.showSaveDialog(null);
+        else
+            container = fileChooser.showOpenDialog(null);
+
+        if(container != null) {
+            pathToContainer.setText(container.getPath());
+            UserPreferences.setPathToContainer(container.getPath());
+        }
+    }
+
     @FXML
-    protected abstract void executeAction(ActionEvent event);
+    public void executeAction(ActionEvent event) {
+        clearErrors();
+
+        if(checkFields()) {
+            try {
+                MainKey mainKey = computeMainKey();
+
+                UserPreferences.setPathToContainer(pathToContainer.getText());
+                UserPreferences.setPathToKey(pathToKey.getText());
+
+                String groupId = SyncUtils.computeGroupId(mainKey.getKey());
+                SyncPreferences.getInstance().setGroupId(groupId);
+
+                byte[] key = SyncUtils.computeKey(firstPassword.getText(), mainKey.getKey());
+                SyncPreferences.getInstance().setKey(key);
+
+                showVFSDialog();
+                ((Node)(event.getSource())).getScene().getWindow().hide();
+
+            } catch (IOException e) {
+                setError("Ошибка при работе с мастер-ключем.", pathToKey);
+            } catch (NoCorrectPasswordException e) {
+                setError("Неправильный пароль.", firstPassword);
+            }
+        }
+    }
+
 
     protected boolean checkFields() {
         if(firstPassword.getText().trim().length() == 0) {
@@ -64,6 +146,13 @@ public abstract class BaseLoginController {
 
         if(pathToContainer.getText().trim().length() == 0) {
             setError("Путь до контейнера не выбран", pathToContainer);
+            return false;
+        }
+
+        Path pathToFolder = Paths.get(pathToContainer.getText()).getParent();
+
+        if(Files.notExists(pathToFolder)) {
+            setError("Путь до контейнера не существует", pathToContainer);
             return false;
         }
 

@@ -1,8 +1,5 @@
-package com.jcryptosync.ui;
+package com.jcryptosync.ui.login;
 
-import com.jcryptosync.ui.login.BaseLoginController;
-import com.jcryptosync.ui.login.CreateKeyController;
-import com.jcryptosync.ui.login.LoginController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

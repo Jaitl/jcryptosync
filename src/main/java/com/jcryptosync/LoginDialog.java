@@ -1,6 +1,6 @@
 package com.jcryptosync;
 
-import com.jcryptosync.ui.LoginSceneFactory;
+import com.jcryptosync.ui.login.LoginSceneFactory;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -9,7 +9,6 @@ public class LoginDialog  extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
 
         Scene scene = LoginSceneFactory.createLoginScene(getClass().getClassLoader());
 
