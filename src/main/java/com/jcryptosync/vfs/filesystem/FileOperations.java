@@ -25,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -129,14 +131,32 @@ public class FileOperations {
             log.error("crypt error", e);
         }
 
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
         try (CipherInputStream is = new CipherInputStream(inIs, cipher)) {
-            StreamUtils.readTo(is, os);
+            byte [] buffer = new byte[1024];
+            int sizeRead = -1;
+            while ((sizeRead = is.read(buffer)) != -1) {
+                digest.update(buffer, 0, sizeRead);
+                os.write(buffer, 0, sizeRead);
+            }
+        } catch (IOException e) {
+            log.error("crypt error", e);
+        }
+
+        try {
+            if(os != null)
             os.close();
         } catch (IOException e) {
             log.error("crypt error", e);
         }
 
-        byte[] hash = HashUtils.cumputeHashFile(file);
+        byte[] hash = digest.digest();
         file.setHash(hash);
     }
 
@@ -171,15 +191,13 @@ public class FileOperations {
         byte[] ivByte = CryptFactory.generateRandomIV();
         newFile.setIv(ivByte);
 
-        copyFileData(cryptFile, newFile);
-
-        byte[] hash = HashUtils.cumputeHashFile(newFile);
+        byte[] hash = copyFileData(cryptFile, newFile);
         newFile.setHash(hash);
 
         return newFile;
     }
 
-    private static void copyFileData(CryptFile oldFile, CryptFile newFile) {
+    private static byte[] copyFileData(CryptFile oldFile, CryptFile newFile) {
         Path pathToOldFile = UserPreferences.getPathToCryptDir().resolve(oldFile.getUniqueId());
         Path pathToNewFile = UserPreferences.getPathToCryptDir().resolve(newFile.getUniqueId());
 
@@ -193,13 +211,25 @@ public class FileOperations {
             log.error("decrypt error", e);
         }
 
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
         CipherInputStream cis = null;
         CipherOutputStream cos = null;
         try {
             cis = new CipherInputStream(Files.newInputStream(pathToOldFile, StandardOpenOption.READ), inputCipher);
             cos = new CipherOutputStream(Files.newOutputStream(pathToNewFile, StandardOpenOption.CREATE_NEW), outputCipher);
 
-            StreamUtils.readTo(cis, cos);
+            byte [] buffer = new byte[1024];
+            int sizeRead = -1;
+            while ((sizeRead = cis.read(buffer)) != -1) {
+                digest.update(buffer, 0, sizeRead);
+                cos.write(buffer, 0, sizeRead);
+            }
         } catch (IOException e) {
             log.error("copy error", e);
         } finally {
@@ -214,5 +244,7 @@ public class FileOperations {
                 e.printStackTrace();
             }
         }
+
+        return digest.digest();
     }
 }
