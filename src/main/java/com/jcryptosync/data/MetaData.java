@@ -5,6 +5,8 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MetaData {
@@ -12,33 +14,50 @@ public class MetaData {
 
     private static final String ROOT_FOLDER_ID = "rootFolderId";
     private static final String FILE_METADATA = "fileMetadata";
-    private static final String INTERNAL_SETTINGS = "internalSettings";
 
     private DB db;
+
+    private Map<String, AbstractFile> metaMap;
 
     private MetaData() {
         Path pathToDb = UserPreferences.getPathToContainer();
         db = DBMaker.newFileDB(pathToDb.toFile()).closeOnJvmShutdown().make();
+        metaMap = db.getTreeMap(FILE_METADATA);
     }
 
     public static MetaData getInstance() {
         return instance;
     }
 
-    public Map<String, AbstractFile> getFileMetadata() {
-        return  db.getTreeMap(FILE_METADATA);
-    }
-    public Map<String, Object> getInternalSettings() {
-        return  db.getTreeMap(INTERNAL_SETTINGS);
+    public void addFile(AbstractFile file) {
+        metaMap.put(file.getUniqueId(), file);
+        db.commit();
     }
 
-    public void save() {
+    public void updateFile(AbstractFile file) {
+        metaMap.replace(file.getUniqueId(), file);
         db.commit();
+    }
+
+    public boolean containsFile(String idFile) {
+        return metaMap.containsKey(idFile);
+    }
+
+    public Collection<AbstractFile> getCollectionFiles() {
+        return metaMap.values();
+    }
+
+    public AbstractFile getFileById(String idFile) {
+        return metaMap.get(idFile);
+    }
+
+    public int getCountFiles() {
+        return metaMap.size();
     }
 
     public void saveRootFolderId(String id) {
         db.createAtomicString(ROOT_FOLDER_ID, id);
-        save();
+        db.commit();
     }
 
     public String getRootFolderId() {

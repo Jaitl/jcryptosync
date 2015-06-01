@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,19 +19,16 @@ public class CryptFileSystem {
     private static final CryptFileSystem instance = new CryptFileSystem();
     protected static Logger log = Logger.getLogger(CryptFileSystem.class);
 
-    private MetaData db;
-    private Map<String, AbstractFile> fileMetadata;
+    private MetaData metaData;
     private ChangeEvents changeEvents;
 
     private CryptFileSystem() {
-        db = MetaData.getInstance();
-        fileMetadata = db.getFileMetadata();
+        metaData = MetaData.getInstance();
 
-        if(fileMetadata.entrySet().size() == 0) {
+        if(metaData.getCountFiles() == 0) {
             Folder root = new Folder("Root", null);
-            fileMetadata.put(root.getUniqueId(), root);
-            db.saveRootFolderId(root.getUniqueId());
-            db.save();
+            metaData.addFile(root);
+            metaData.saveRootFolderId(root.getUniqueId());
         }
     }
 
@@ -52,10 +48,8 @@ public class CryptFileSystem {
 
         FileOperations.cryptFile(cryptFile, is);
 
-        fileMetadata.put(cryptFile.getUniqueId(), cryptFile);
+        metaData.addFile(cryptFile);
 
-
-        db.save();
         log.debug("added new file: " + cryptFile.getName());
 
         if(changeEvents != null && cryptFile.getLength() > 0) {
@@ -64,9 +58,7 @@ public class CryptFileSystem {
     }
 
     public void createNewFolder(Folder newFolder) {
-        fileMetadata.put(newFolder.getUniqueId(), newFolder);
-
-        db.save();
+        metaData.addFile(newFolder);
         log.debug("added folder file: " + newFolder.getName());
 
         if(changeEvents != null)
@@ -91,8 +83,7 @@ public class CryptFileSystem {
         String clientId = ContainerPreferences.getInstance().getClientId();
         cryptFile.getVector().increaseModification(clientId);
 
-        fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
-        db.save();
+        metaData.updateFile(cryptFile);
 
         if(changeEvents != null && cryptFile.getLength() > 0)
             changeEvents.changeFile(cryptFile);
@@ -102,8 +93,7 @@ public class CryptFileSystem {
         CryptFile newFile = FileOperations.copyFile(cryptFile, newName);
         newFile.setParentId(folder.getUniqueId());
 
-        fileMetadata.put(newFile.getUniqueId(), newFile);
-        db.save();
+        metaData.addFile(newFile);
 
         if(changeEvents != null && newFile.getLength() > 0)
             changeEvents.changeFile(newFile);
@@ -112,8 +102,7 @@ public class CryptFileSystem {
     public void deleteFolder(Folder folder) {
         folder.setModDate(new Date());
         folder.setDeleted(true);
-        fileMetadata.replace(folder.getUniqueId(), folder);
-        db.save();
+        metaData.updateFile(folder);
 
         log.debug("folder deleted: " + folder.getName());
 
@@ -128,10 +117,9 @@ public class CryptFileSystem {
         String clientId = ContainerPreferences.getInstance().getClientId();
         cryptFile.getVector().increaseModification(clientId);
 
-        fileMetadata.replace(cryptFile.getUniqueId(), cryptFile);
-
         FileOperations.deleteFile(cryptFile);
-        db.save();
+
+        metaData.updateFile(cryptFile);
 
         log.debug("file deleted: " + cryptFile.getName());
 
@@ -158,8 +146,7 @@ public class CryptFileSystem {
                 changeEvents.changeFolder((Folder) file);
         }
 
-        fileMetadata.replace(file.getUniqueId(), file);
-        db.save();
+        metaData.updateFile(file);
     }
 
     public void moveFile(AbstractFile file, Folder folder, String name) {
@@ -180,26 +167,22 @@ public class CryptFileSystem {
                 changeEvents.changeFolder((Folder) file);
         }
 
-        fileMetadata.replace(file.getUniqueId(), file);
-
-        db.save();
+        metaData.updateFile(file);
 
         log.debug(String.format("file moved: %s", name));
     }
 
     public Folder getRoot() {
-        return (Folder) fileMetadata.get(db.getRootFolderId());
+        return (Folder) metaData.getFileById(metaData.getRootFolderId());
     }
 
     public List<AbstractFile> getChildren(Folder folder) {
-
-            List<AbstractFile> children = fileMetadata.values().stream()
+            List<AbstractFile> children = metaData.getCollectionFiles().stream()
                     .filter(f -> folder.getUniqueId().equals(f.getParentId()))
                     .filter(f -> !f.isDeleted())
                     .collect(Collectors.toList());
 
             return children;
-
     }
 
     public AbstractFile getChild(Folder folder, String name) {
@@ -210,10 +193,6 @@ public class CryptFileSystem {
                 .findFirst();
 
         return file.orElse(null);
-    }
-
-    public ChangeEvents getChangeEvents() {
-        return changeEvents;
     }
 
     public void setChangeEvents(ChangeEvents changeEvents) {

@@ -89,7 +89,7 @@ public class SyncServer implements SyncFiles {
 
             listCryptFiles.setRootId(db.getRootFolderId());
 
-            db.getFileMetadata().values().forEach(listCryptFiles::addToList);
+            db.getCollectionFiles().forEach(listCryptFiles::addToList);
 
             return listCryptFiles;
         }
@@ -152,11 +152,11 @@ public class SyncServer implements SyncFiles {
     @Override
     public void fileIsSynced(CryptFile file) {
         if(verifyToken()) {
-            MetaData md = MetaData.getInstance();
+            MetaData metaData = MetaData.getInstance();
 
-            CryptFile cryptFile = (CryptFile) md.getFileMetadata().get(file.getUniqueId());
+            CryptFile cryptFile = (CryptFile) metaData.getFileById(file.getUniqueId());
             cryptFile.getVector().increaseSynchronization(ContainerPreferences.getInstance().getClientId());
-            md.getFileMetadata().replace(cryptFile.getUniqueId(), cryptFile);
+            metaData.updateFile(cryptFile);
         }
     }
 

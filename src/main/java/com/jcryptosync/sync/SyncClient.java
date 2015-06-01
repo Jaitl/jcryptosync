@@ -111,9 +111,9 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
     public void requestFullFileList() {
         ListCryptFiles localFiles = new ListCryptFiles();
-        MetaData db = MetaData.getInstance();
-        localFiles.setRootId(db.getRootFolderId());
-        db.getFileMetadata().values().forEach(localFiles::addToList);
+        MetaData metaData = MetaData.getInstance();
+        localFiles.setRootId(metaData.getRootFolderId());
+        metaData.getCollectionFiles().forEach(localFiles::addToList);
 
         Collection<SecondClient> clientList = SyncPreferences.getInstance().getClientMap().values();
 
@@ -182,37 +182,35 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         if (folder.getUniqueId().equals(rootId))
             return;
 
-        MetaData db = MetaData.getInstance();
+        MetaData metaData = MetaData.getInstance();
 
         if(folder.getParentId().equals(rootId)) {
-            folder.setParentId(db.getRootFolderId());
+            folder.setParentId(metaData.getRootFolderId());
         }
 
-        Folder oldFolder = (Folder) db.getFileMetadata().get(folder.getUniqueId());
+        Folder oldFolder = (Folder) metaData.getFileById(folder.getUniqueId());
+
         if (oldFolder != null) {
-            db.getFileMetadata().replace(folder.getUniqueId(), folder);
+            metaData.updateFile(folder);
         } else {
-            db.getFileMetadata().put(folder.getUniqueId(), folder);
+            metaData.addFile(folder);
         }
-        db.save();
     }
 
     public void synchronizeFile(SecondClient client, CryptFile file, String rootId) {
-        MetaData db = MetaData.getInstance();
+        MetaData metaData = MetaData.getInstance();
 
-        Map<String, AbstractFile> localFiles = db.getFileMetadata();
 
         CryptFile localFile = null;
-        if(localFiles.containsKey(file.getUniqueId())) {
-            localFile = (CryptFile) localFiles.get(file.getUniqueId());
+        if(metaData.containsFile(file.getUniqueId())) {
+            localFile = (CryptFile) metaData.getFileById(file.getUniqueId());
 
             if(localFile.getVector().isChange(file.getVector())) {
                 if(localFile.getVector().isConflict(file.getVector())) {
                     log.error("conflict, file: " + file.getUniqueId());
 
                     CryptFile copyFile = FileOperations.copyFile(localFile, null);
-                    db.getFileMetadata().put(copyFile.getUniqueId(), copyFile);
-                    db.save();
+                    metaData.addFile(copyFile);
                     client.getSyncFilesService().updateFile(copyFile, ContainerPreferences.getInstance().getClientId());
                 }
             } else {
@@ -228,7 +226,7 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         }
 
         if(file.getParentId().equals(rootId)) {
-            file.setParentId(db.getRootFolderId());
+            file.setParentId(metaData.getRootFolderId());
         }
 
         if(!file.isDeleted()) {
@@ -250,12 +248,10 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         }
 
         if(localFile == null) {
-            db.getFileMetadata().put(file.getUniqueId(), file);
+            metaData.addFile(file);
         } else {
-            db.getFileMetadata().replace(file.getUniqueId(), file);
+            metaData.updateFile(file);
         }
-
-        db.save();
 
         client.getSyncFilesService().fileIsSynced(file);
     }
