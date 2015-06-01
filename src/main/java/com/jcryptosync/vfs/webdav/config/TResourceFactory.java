@@ -21,14 +21,12 @@ package com.jcryptosync.vfs.webdav.config;
 import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
-import com.jcryptosync.vfs.webdav.AbstractFile;
 import com.jcryptosync.vfs.webdav.Folder;
 import io.milton.common.Path;
 import io.milton.http.ResourceFactory;
 import io.milton.resource.Resource;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TResourceFactory implements ResourceFactory {

@@ -12,7 +12,6 @@ import com.jcryptosync.utils.SecurityUtils;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import com.jcryptosync.vfs.filesystem.FileOperations;
-import com.jcryptosync.vfs.webdav.AbstractFile;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import com.jcryptosync.vfs.webdav.Folder;
 import org.apache.log4j.Logger;
@@ -22,7 +21,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.MessageContext;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -128,11 +126,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
                         synchronizeFolder((Folder) f, listCryptFiles.getRootId());
                 });
 
-                Runnable runnable = () -> {
-                    client.getSyncFilesService().updateFiles(localFiles);
-                };
-
-                new Thread(runnable).start();
+                new AsyncAction().executeAction(() ->
+                        client.getSyncFilesService().updateFiles(localFiles));
             }
         }
 
@@ -199,7 +194,6 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
     public void synchronizeFile(SecondClient client, CryptFile file, String rootId) {
         MetaData metaData = MetaData.getInstance();
-
 
         CryptFile localFile = null;
         if(metaData.containsFile(file.getUniqueId())) {
@@ -269,24 +263,23 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
     @Override
     public void changeFile(CryptFile file) {
-        Runnable runnable = () -> {
+        AsyncAction asyncAction = new AsyncAction();
+
+        asyncAction.executeAction(() -> {
             Collection<SecondClient> clientList = SyncPreferences.getInstance().getClientMap().values();
             String rootId = MetaData.getInstance().getRootFolderId();
             clientList.forEach((c) -> c.getSyncFilesService().updateFile(file, rootId));
-        };
-
-        new Thread(runnable).start();
+        });
     }
 
     @Override
     public void changeFolder(Folder folder) {
+        AsyncAction asyncAction = new AsyncAction();
 
-        Runnable runnable = () -> {
+        asyncAction.executeAction(() -> {
             Collection<SecondClient> clientList = SyncPreferences.getInstance().getClientMap().values();
             String rootId = MetaData.getInstance().getRootFolderId();
             clientList.forEach((c) -> c.getSyncFilesService().updateFolder(folder, rootId));
-        };
-
-        new Thread(runnable).start();
+        });
     }
 }

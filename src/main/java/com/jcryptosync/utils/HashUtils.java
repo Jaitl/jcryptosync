@@ -1,17 +1,8 @@
 package com.jcryptosync.utils;
 
-import com.jcryptosync.data.ContainerPreferences;
-import com.jcryptosync.data.UserPreferences;
-import com.jcryptosync.vfs.webdav.CryptFile;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.ArrayUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 

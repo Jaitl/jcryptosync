@@ -1,7 +1,6 @@
 package com.jcryptosync;
 
 import com.jcryptosync.data.ContainerPreferences;
-import com.jcryptosync.data.SyncPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.exceptoins.ContainerMountException;
 import com.jcryptosync.sync.SyncClient;

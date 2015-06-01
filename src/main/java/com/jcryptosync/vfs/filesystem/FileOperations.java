@@ -4,7 +4,6 @@ import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.data.UserPreferences;
 import com.jcryptosync.sync.VectorTimePair;
 import com.jcryptosync.utils.CryptFactory;
-import com.jcryptosync.utils.HashUtils;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import io.milton.common.StreamUtils;

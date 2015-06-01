@@ -2,8 +2,6 @@ package com.jcryptosync.domain;
 
 import com.jcryptosync.sync.SyncFiles;
 
-import java.util.stream.Stream;
-
 public class SecondClient {
     public String idClient;
     public String idSession;

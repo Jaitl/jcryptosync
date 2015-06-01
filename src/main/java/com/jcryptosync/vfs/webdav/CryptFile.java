@@ -18,7 +18,6 @@
  */
 package com.jcryptosync.vfs.webdav;
 
-import com.jcryptosync.data.ContainerPreferences;
 import com.jcryptosync.sync.VectorTimePair;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import io.milton.http.Auth;
@@ -31,7 +30,6 @@ import io.milton.resource.CopyableResource;
 import io.milton.resource.GetableResource;
 import io.milton.resource.ReplaceableResource;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
