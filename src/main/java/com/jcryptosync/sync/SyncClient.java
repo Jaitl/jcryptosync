@@ -239,8 +239,6 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
             } else {
                 if(file.getLength() > 0) {
                     loadFile(client, file);
-                } else {
-                    return;
                 }
             }
         } else {
