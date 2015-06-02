@@ -67,7 +67,7 @@ public class MessageService {
 
     public static void deleteFile(AbstractFile file) {
         if(file instanceof CryptFile) {
-            showMessage(String.format("файл \"%s\" уладен", file.getName()));
+            showMessage(String.format("файл \"%s\" удален", file.getName()));
         } else {
             showMessage(String.format("каталог \"%s\" удален", file.getName()));
         }

@@ -165,6 +165,7 @@ public class FileOperations {
         newFile.setLength(cryptFile.getLength());
         newFile.setContentType(cryptFile.getContentType());
         newFile.setParentId(cryptFile.getParentId());
+        newFile.setDeleted(cryptFile.isDeleted());
 
         newFile.setVector(new VectorTimePair());
         newFile.getVector().increaseModification(ContainerPreferences.getInstance().getClientId());
@@ -187,8 +188,10 @@ public class FileOperations {
         byte[] ivByte = generateRandomIV();
         newFile.setIv(ivByte);
 
-        byte[] hash = copyFileData(cryptFile, newFile);
-        newFile.setHash(hash);
+        if(cryptFile.getLength() > 0) {
+            byte[] hash = copyFileData(cryptFile, newFile);
+            newFile.setHash(hash);
+        }
 
         return newFile;
     }

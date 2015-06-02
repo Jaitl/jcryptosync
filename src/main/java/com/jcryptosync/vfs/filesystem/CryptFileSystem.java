@@ -146,7 +146,7 @@ public class CryptFileSystem {
             String clientId = ContainerPreferences.getInstance().getClientId();
             cryptFile.getVector().increaseModification(clientId);
 
-            if(changeEvents != null && cryptFile.getLength() > 0)
+            if(changeEvents != null)
                 changeEvents.changeFile(cryptFile);
         } else {
             if(changeEvents != null)

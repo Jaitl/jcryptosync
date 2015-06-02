@@ -208,9 +208,13 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
                 if(localFile.getVector().isConflict(file.getVector())) {
                     log.error("conflict, file: " + file.getUniqueId());
 
+                    if(localFile.isDeleted() && file.isDeleted())
+                        return;
+
                     CryptFile copyFile = FileOperations.copyFile(localFile, null);
                     metaData.addFile(copyFile);
-                    client.getSyncFilesService().updateFile(copyFile, ContainerPreferences.getInstance().getClientId());
+                    client.getSyncFilesService().updateFile(copyFile, metaData.getRootFolderId());
+
                 }
             } else {
                 return;
@@ -232,8 +236,13 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
             if (localFile != null) {
                 if (!Arrays.equals(file.getHash(), localFile.getHash())) {
-                    FileOperations.deleteFile(localFile);
-                    loadFile(client, file);
+
+                    if(localFile.getLength() > 0)
+                        FileOperations.deleteFile(localFile);
+
+                    if(file.getLength() > 0) {
+                        loadFile(client, file);
+                    }
                 }
             } else {
                 if(file.getLength() > 0) {
@@ -241,7 +250,9 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
                 }
             }
         } else {
-            FileOperations.deleteFile(file);
+            if(file.getLength() > 0) {
+                FileOperations.deleteFile(file);
+            }
         }
 
         if(localFile == null) {
