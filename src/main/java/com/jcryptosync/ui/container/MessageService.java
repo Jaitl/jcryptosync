@@ -42,11 +42,11 @@ public class MessageService {
     }
 
     public static void openFile(CryptFile cryptFile) {
-        showMessage(String.format("файл \"%s\" открыт", cryptFile.getName()));
+        showMessage(String.format("открыт файл \"%s\"", cryptFile.getName()));
     }
 
     public static void updateFile(CryptFile cryptFile) {
-        showMessage(String.format("файл \"%s\" обновлен", cryptFile.getName()));
+        showMessage(String.format("обновлен файл \"%s\"", cryptFile.getName()));
     }
 
     public static void renameFile(AbstractFile file, String newName) {
@@ -61,15 +61,15 @@ public class MessageService {
         if(file instanceof CryptFile) {
             showMessage(String.format("файл \"%s\" перемещен в каталог \"%s\"", file.getName(), folder.getName()));
         } else {
-            showMessage(String.format("каталог \"%s\" переименован в каталог \"%s\"", file.getName(), folder.getName()));
+            showMessage(String.format("каталог \"%s\" перемещен в каталог \"%s\"", file.getName(), folder.getName()));
         }
     }
 
     public static void deleteFile(AbstractFile file) {
         if(file instanceof CryptFile) {
-            showMessage(String.format("файл \"%s\" удален", file.getName()));
+            showMessage(String.format("удален файл \"%s\"", file.getName()));
         } else {
-            showMessage(String.format("каталог \"%s\" удален", file.getName()));
+            showMessage(String.format("удален каталог \"%s\"", file.getName()));
         }
     }
 
