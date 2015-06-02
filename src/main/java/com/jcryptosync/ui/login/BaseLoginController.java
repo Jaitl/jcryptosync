@@ -156,6 +156,13 @@ public abstract class BaseLoginController {
             return false;
         }
 
+        Path pathKey = Paths.get(pathToKey.getText());
+
+        if(Files.notExists(pathKey)) {
+            setError("Масте-ключ по указанному пути не найден", pathToContainer);
+            return false;
+        }
+
         return true;
     }
 
