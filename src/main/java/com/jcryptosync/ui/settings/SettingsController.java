@@ -44,11 +44,19 @@ public class SettingsController {
     }
 
     private boolean checkSettings() {
-
+        clearErrors();
+        
         try {
             Integer.parseInt(tfStartPort.getText());
+        } catch (NumberFormatException e) {
+            setError(tfStartPort);
+            return false;
+        }
+
+        try {
             Integer.parseInt(tfEndPort.getText());
         } catch (NumberFormatException e) {
+            setError(tfEndPort);
             return false;
         }
 
@@ -77,5 +85,17 @@ public class SettingsController {
 
         controller.loadSettings();
         stage.show();
+    }
+
+    protected void setError(TextField field) {
+        lastField = field;
+        field.getStyleClass().addAll("error");
+    }
+
+    private TextField lastField;
+
+    protected void clearErrors() {
+         if(lastField != null)
+            lastField.getStyleClass().removeAll("error");
     }
 }
