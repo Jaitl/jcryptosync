@@ -3,6 +3,7 @@ package com.jcryptosync.ui.container;
 import com.jcryptosync.Bootloader;
 import com.jcryptosync.data.preferences.SyncPreferences;
 import com.jcryptosync.exceptoins.ContainerMountException;
+import com.jcryptosync.ui.info.InfoController;
 import com.jcryptosync.ui.settings.SettingsController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -68,7 +69,7 @@ public class ContainerController implements ShowMessage {
 
     @FXML
     public void openInfo() {
-
+        InfoController.openInfo(getClass().getClassLoader());
     }
 
     @FXML

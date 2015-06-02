@@ -27,6 +27,7 @@ public class Bootloader {
             generateUser();
             generateContainerName();
             containerManager = VFSManager.createManager();
+            SyncPreferences.getInstance().setVfsManager(containerManager);
             jetty = new Jetty();
             runJetty();
             generateIdClient();

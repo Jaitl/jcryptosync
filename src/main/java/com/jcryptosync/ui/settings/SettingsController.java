@@ -45,7 +45,7 @@ public class SettingsController {
 
     private boolean checkSettings() {
         clearErrors();
-        
+
         try {
             Integer.parseInt(tfStartPort.getText());
         } catch (NumberFormatException e) {
@@ -76,7 +76,7 @@ public class SettingsController {
         SettingsController controller = fxmlLoader.getController();
 
         Stage stage = new Stage();
-        stage.setTitle("Настройки");
+        stage.setTitle("РќР°СЃС‚СЂРѕР№РєРё");
 
         Scene scene = new Scene(root, 500, 300);
         scene.getStylesheets().add("styles/main.css");
