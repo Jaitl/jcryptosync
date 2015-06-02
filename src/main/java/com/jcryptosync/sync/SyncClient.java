@@ -8,6 +8,7 @@ import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.domain.ListCryptFiles;
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
+import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import com.jcryptosync.vfs.filesystem.FileOperations;
@@ -93,6 +94,7 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
             client.setToken(token);
             addTokenToHeader(client, token);
 
+            MessageService.authenticationComplited(token.getFirstClientId());
 
             log.info(String.format("get token from client: %s", token.getFirstClientId()));
         }
@@ -116,6 +118,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
         if(clientList.size() > 0) {
             for (SecondClient client : clientList) {
+
+                MessageService.startSyncWithClient(client.getIdClient());
 
                 ListCryptFiles listCryptFiles = client.syncFilesService.getAllFiles();
                 listCryptFiles.getFileList().forEach(f -> {
@@ -189,6 +193,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         } else {
             metaData.addFile(folder);
         }
+
+        MessageService.syncFolder(folder);
     }
 
     public void synchronizeFile(SecondClient client, CryptFile file, String rootId) {
@@ -243,6 +249,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         } else {
             metaData.updateFile(file);
         }
+
+        MessageService.syncFile(file);
 
         client.getSyncFilesService().fileIsSynced(file);
     }

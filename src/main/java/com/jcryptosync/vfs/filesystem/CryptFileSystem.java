@@ -2,6 +2,7 @@ package com.jcryptosync.vfs.filesystem;
 
 import com.jcryptosync.data.MetaData;
 import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.vfs.webdav.AbstractFile;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import com.jcryptosync.vfs.webdav.Folder;
@@ -37,8 +38,6 @@ public class CryptFileSystem {
     }
 
     public void createNewFile(CryptFile cryptFile, InputStream is) {
-
-
         String clientId = ContainerPreferences.getInstance().getClientId();
         cryptFile.getVector().increaseSynchronization(clientId);
 
@@ -51,6 +50,7 @@ public class CryptFileSystem {
         metaData.addFile(cryptFile);
 
         log.debug("added new file: " + cryptFile.getName());
+        MessageService.addFile(cryptFile);
 
         if(changeEvents != null) {
             changeEvents.changeFile(cryptFile);
@@ -60,6 +60,8 @@ public class CryptFileSystem {
     public void createNewFolder(Folder newFolder) {
         metaData.addFile(newFolder);
         log.debug("added folder file: " + newFolder.getName());
+
+        MessageService.addFile(newFolder);
 
         if(changeEvents != null)
             changeEvents.changeFolder(newFolder);
@@ -71,12 +73,14 @@ public class CryptFileSystem {
             FileOperations.decryptFile(cryptFile, os);
 
         log.debug("get file content: " + cryptFile.getName());
+        MessageService.openFile(cryptFile);
     }
 
     public void updateFile(CryptFile cryptFile, InputStream is) {
         FileOperations.updateFile(cryptFile, is);
 
         log.debug("file updated: " + cryptFile.getName());
+        MessageService.updateFile(cryptFile);
 
         cryptFile.setModDate(new Date());
 
@@ -105,6 +109,7 @@ public class CryptFileSystem {
         metaData.updateFile(folder);
 
         log.debug("folder deleted: " + folder.getName());
+        MessageService.deleteFile(folder);
 
         if(changeEvents != null)
             changeEvents.changeFolder(folder);
@@ -122,6 +127,7 @@ public class CryptFileSystem {
         metaData.updateFile(cryptFile);
 
         log.debug("file deleted: " + cryptFile.getName());
+        MessageService.deleteFile(cryptFile);
 
         if(changeEvents != null)
             changeEvents.changeFile(cryptFile);
@@ -131,6 +137,7 @@ public class CryptFileSystem {
         file.setModDate(new Date());
 
         log.debug(String.format("file rename from %s to %s ", file.getName(), name));
+        MessageService.renameFile(file, name);
 
         file.setName(name);
 
@@ -170,6 +177,7 @@ public class CryptFileSystem {
         metaData.updateFile(file);
 
         log.debug(String.format("file moved: %s", name));
+        MessageService.moveFile(file, folder);
     }
 
     public Folder getRoot() {

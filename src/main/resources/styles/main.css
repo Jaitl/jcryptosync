@@ -15,7 +15,12 @@
     -fx-control-inner-background: rgba(242, 241, 240, 0);
 }
 
-#errorArea:focused {
+#taMessage {
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: rgba(242, 241, 240, 0);
+}
+
+#errorArea:focused, #taMessage:focused {
     -fx-focus-color: -fx-control-inner-background ;
     -fx-faint-focus-color: -fx-control-inner-background ;
 }
@@ -26,4 +31,8 @@
 
 #statusLabel.green {
     -fx-text-fill: green;
+}
+
+#labelListEvents {
+    -fx-font-weight: bold;
 }

@@ -208,7 +208,7 @@ public abstract class BaseLoginController {
         Stage stage = new Stage();
         stage.setTitle("Управление контейнером");
 
-        Scene scene = new Scene(root, 400, 400);
+        Scene scene = new Scene(root, 600, 400);
         scene.getStylesheets().add("styles/main.css");
 
         stage.setScene(scene);

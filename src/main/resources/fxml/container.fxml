@@ -6,50 +6,44 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jcryptosync.ui.container.ContainerController">
-   <bottom>
-      <VBox prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
-         <children>
-            <VBox fx:id="errorVbox" prefHeight="0.0" prefWidth="0.0">
-               <children>
-                  <Label fx:id="errorLabel" text="Ошибки:" />
-                  <TextArea fx:id="errorArea" editable="false" prefHeight="30.0" />
-               </children>
-            </VBox>
-            <HBox prefHeight="0.0" prefWidth="0.0">
-               <children>
-                  <Label text="Статус:">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="statusLabel" text="Отключен" />
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
-            </HBox>
-         </children>
-      </VBox>
-   </bottom>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jcryptosync.ui.container.ContainerController">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
    <center>
-      <VBox prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0">
-               <children>
-                  <Button fx:id="executeButton" mnemonicParsing="false" onAction="#executeAction" text="Подключить контейрен" />
-               </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </VBox>
+            <Label text="Список событий:" fx:id="labelListEvents">
+               <padding>
+                  <Insets bottom="3.0" />
+               </padding>
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="taMessage" editable="false" prefHeight="0.0" prefWidth="0.0" VBox.vgrow="ALWAYS" />
          </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
       </VBox>
    </center>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
 </BorderPane>

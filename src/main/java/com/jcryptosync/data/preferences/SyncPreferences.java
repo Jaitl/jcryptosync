@@ -2,6 +2,7 @@ package com.jcryptosync.data.preferences;
 
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.sync.SyncClient;
+import com.jcryptosync.ui.container.ShowMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,4 @@ public class SyncPreferences {
     public Map<String, SecondClient> getClientMap() {
         return clientMap;
     }
-
-
 }

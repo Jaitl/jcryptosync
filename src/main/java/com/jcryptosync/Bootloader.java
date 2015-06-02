@@ -1,9 +1,12 @@
 package com.jcryptosync;
 
 import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.data.preferences.SyncPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.exceptoins.ContainerMountException;
+import com.jcryptosync.sync.AsyncAction;
 import com.jcryptosync.sync.SyncClient;
+import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.manager.VFSManager;
 
@@ -18,22 +21,27 @@ public class Bootloader {
     private SyncClient syncronizer;
 
     public void runApplication() {
-        containerPreferences = ContainerPreferences.getInstance();
-        findPort();
-        generateUser();
-        generateContainerName();
-        containerManager = VFSManager.createManager();
-        jetty = new Jetty();
-        runJetty();
-        generateIdClient();
+        new AsyncAction().executeAction(() -> {
+            containerPreferences = ContainerPreferences.getInstance();
+            findPort();
+            generateUser();
+            generateContainerName();
+            containerManager = VFSManager.createManager();
+            jetty = new Jetty();
+            runJetty();
+            generateIdClient();
 
-        syncronizer = new SyncClient();
+            try {
+                openContainer();
+                MessageService.showMessage("сетевой диск подключен");
+            } catch (ContainerMountException e) {
+                log.error("mount  error", e);
+                MessageService.showMessage(e.getMessage());
+            }
 
-        Runnable runnable = () -> {
+            syncronizer = new SyncClient();
             syncronizer.runFirstSync();
-        };
-
-        new Thread(runnable).start();
+        });
     }
 
 
