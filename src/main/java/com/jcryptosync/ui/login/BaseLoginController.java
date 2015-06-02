@@ -206,7 +206,7 @@ public abstract class BaseLoginController {
         ContainerController controller = fxmlLoader.getController();
 
         Stage stage = new Stage();
-        stage.setTitle("Управление контейнером");
+        stage.setTitle("Список событий");
 
         Scene scene = new Scene(root, 600, 400);
         scene.getStylesheets().add("styles/main.css");
