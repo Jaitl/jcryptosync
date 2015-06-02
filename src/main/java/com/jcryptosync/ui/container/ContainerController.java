@@ -27,7 +27,14 @@ public class ContainerController implements ShowMessage {
 
         bootloader.runApplication();
 
-        stage.setOnCloseRequest(e -> bootloader.stopApplication());
+        stage.setOnCloseRequest(e -> {
+            try {
+                bootloader.stopApplication();
+            } catch (ContainerMountException e1) {
+                e.consume();
+                showMessage("ошибка при отключении диска, возможно один из файлов используется");
+            }
+        });
         //stage.setOnHiding(e -> bootstrap.stopApplication());
     }
 

@@ -45,13 +45,8 @@ public class Bootloader {
     }
 
 
-    public void stopApplication() {
-        try {
-            containerManager.closeContainer();
-        } catch (ContainerMountException e) {
-            e.printStackTrace();
-        }
-
+    public void stopApplication() throws ContainerMountException {
+        containerManager.closeContainer();
         stopJetty();
     }
 
