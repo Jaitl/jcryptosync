@@ -56,7 +56,7 @@
                         <Button mnemonicParsing="false" onAction="#selectContainerAction" text="Выбрать" />
                      </children>
                   </HBox>
-                  <CheckBox mnemonicParsing="false" text="Новый файл контейнера" fx:id="isNewContainer">
+                  <CheckBox fx:id="isNewContainer" mnemonicParsing="false" text="Новый файл контейнера">
                      <VBox.margin>
                         <Insets top="5.0" />
                      </VBox.margin>
@@ -99,4 +99,17 @@
          </BorderPane.margin>
       </VBox>
    </bottom>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+         <menus>
+            <Menu mnemonicParsing="false" text="Файл">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Настройки" onAction="#openSettings" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Выход" onAction="#closeDialog" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </top>
 </BorderPane>

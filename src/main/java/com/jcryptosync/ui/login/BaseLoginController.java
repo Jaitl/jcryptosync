@@ -5,7 +5,9 @@ import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.domain.MainKey;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.ui.container.ContainerController;
+import com.jcryptosync.ui.settings.SettingsController;
 import com.jcryptosync.utils.SyncUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -216,5 +218,15 @@ public abstract class BaseLoginController {
         controller.prepareDialog(stage);
 
         stage.show();
+    }
+
+    @FXML
+    public void openSettings() {
+        SettingsController.openSettings(getClass().getClassLoader());
+    }
+
+    @FXML
+    public void closeDialog() {
+        Platform.exit();
     }
 }
