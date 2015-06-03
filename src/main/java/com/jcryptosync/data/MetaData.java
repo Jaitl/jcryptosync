@@ -1,5 +1,6 @@
 package com.jcryptosync.data;
 
+import com.jcryptosync.data.preferences.SyncPreferences;
 import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.vfs.webdav.AbstractFile;
 import org.mapdb.DB;
@@ -21,7 +22,8 @@ public class MetaData {
 
     private MetaData() {
         Path pathToDb = UserPreferences.getPathToContainer();
-        db = DBMaker.newFileDB(pathToDb.toFile()).closeOnJvmShutdown().make();
+        byte[] key = SyncPreferences.getInstance().getKey();
+        db = DBMaker.newFileDB(pathToDb.toFile()).encryptionEnable(key).closeOnJvmShutdown().make();
         metaMap = db.getTreeMap(FILE_METADATA);
     }
 

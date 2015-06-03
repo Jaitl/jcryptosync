@@ -73,6 +73,14 @@ public class MessageService {
         }
     }
 
+    public static void cryptFile(CryptFile file) {
+        showMessage(String.format("зашифрован файл \"%s\"", file.getName()));
+    }
+
+    public static void encryptFile(CryptFile file) {
+        showMessage(String.format("расшифрован файл \"%s\"", file.getName()));
+    }
+
     private static String getIdClient(String clientId) {
         String[] id = clientId.split("-");
 

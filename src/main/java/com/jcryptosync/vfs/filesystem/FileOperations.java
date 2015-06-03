@@ -3,6 +3,7 @@ package com.jcryptosync.vfs.filesystem;
 import com.jcryptosync.data.preferences.ContainerPreferences;
 import com.jcryptosync.data.preferences.UserPreferences;
 import com.jcryptosync.sync.VectorTimePair;
+import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.utils.CryptFactory;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.webdav.CryptFile;
@@ -77,6 +78,8 @@ public class FileOperations {
         } catch (IOException e) {
             log.error("decrypt error", e);
         }
+
+        MessageService.encryptFile(file);
     }
 
     public static void deleteFile(CryptFile file) {
@@ -154,6 +157,8 @@ public class FileOperations {
 
         byte[] hash = digest.digest();
         file.setHash(hash);
+
+        MessageService.cryptFile(file);
     }
 
     public static CryptFile copyFile(CryptFile cryptFile, String name) {
