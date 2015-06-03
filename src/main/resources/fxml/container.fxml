@@ -6,16 +6,16 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jcryptosync.ui.container.ContainerController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jcryptosync.ui.container.ContainerController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="Файл">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Настройки" onAction="#openSettings" />
-                  <MenuItem mnemonicParsing="false" text="Информация о клиенте" onAction="#openInfo" />
+                  <MenuItem mnemonicParsing="false" onAction="#openSettings" text="Настройки" />
+                  <MenuItem mnemonicParsing="false" onAction="#openInfo" text="Информация о клиенте" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem mnemonicParsing="false" text="Выход" onAction="#closeDialog" />
+              <MenuItem mnemonicParsing="false" onAction="#closeDialog" text="Выход" />
             </items>
           </Menu>
         </menus>
@@ -32,7 +32,7 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <TextArea fx:id="taMessage" editable="false" prefHeight="0.0" prefWidth="0.0" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="taMessage" editable="false" wrapText="true" VBox.vgrow="ALWAYS" />
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
