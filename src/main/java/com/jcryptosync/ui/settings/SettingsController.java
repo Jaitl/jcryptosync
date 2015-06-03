@@ -1,6 +1,6 @@
 package com.jcryptosync.ui.settings;
 
-import com.jcryptosync.data.preferences.UserPreferences;
+import com.jcryptosync.preferences.UserPreferences;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

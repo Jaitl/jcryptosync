@@ -37,14 +37,4 @@ public class CryptFactory {
         return cipher;
     }
 
-    public static MessageDigest createMessageDigest() {
-        MessageDigest messageDigest = null;
-        try {
-            messageDigest = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        return messageDigest;
-    }
 }

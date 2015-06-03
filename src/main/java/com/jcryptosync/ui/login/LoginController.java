@@ -1,14 +1,18 @@
 package com.jcryptosync.ui.login;
 
-import com.jcryptosync.data.MasterKeyManager;
-import com.jcryptosync.data.preferences.UserPreferences;
-import com.jcryptosync.domain.MainKey;
+import com.jcryptosync.data.MainKeyManager;
+import com.jcryptosync.exceptoins.NoCorrectCompositeKeyException;
+import com.jcryptosync.exceptoins.NoCorrectMasterKeyException;
+import com.jcryptosync.preferences.UserPreferences;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -24,18 +28,26 @@ public class LoginController extends BaseLoginController {
     }
 
     @Override
-    protected MainKey computeMainKey() throws IOException, NoCorrectPasswordException {
-        MasterKeyManager keyManager = new MasterKeyManager();
-        boolean passIsCorrect = keyManager.checkPassword(firstPassword.getText(), Paths.get(pathToKey.getText()));
-        if(!passIsCorrect)
-            throw new NoCorrectPasswordException("");
+    protected byte[] computeMainKey() throws IOException, NoCorrectPasswordException, NoCorrectCompositeKeyException, NoCorrectMasterKeyException {
 
-        return keyManager.loadPrimaryKeyFromFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
+        byte[] masterKey = new MainKeyManager().loadMainKey(firstPassword.getText(), Paths.get(pathToKey.getText()));
+
+        byte[] compositeKey = MainKeyManager.computeCompositeKey(firstPassword.getText(), masterKey);
+
+        try{
+            DB db = DBMaker.newFileDB(new File(pathToContainer.getText())).encryptionEnable(compositeKey).make();
+            db.close();
+        } catch (Exception e) {
+            throw new NoCorrectCompositeKeyException("");
+        }
+
+        return masterKey;
     }
 
     @Override
     public void prepareDialog() {
         super.prepareDialog();
+        currentMode = Mode.Login;
 
         hideSecondPassword();
         createButton.setText("Создать контейнер");

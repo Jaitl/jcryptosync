@@ -1,6 +1,6 @@
 package com.jcryptosync.vfs.manager;
 
-import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.exceptoins.ContainerMountException;
 import org.slf4j.Logger;

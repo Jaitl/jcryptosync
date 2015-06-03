@@ -1,4 +1,4 @@
-package com.jcryptosync.data.preferences;
+package com.jcryptosync.preferences;
 
 import com.jcryptosync.domain.User;
 

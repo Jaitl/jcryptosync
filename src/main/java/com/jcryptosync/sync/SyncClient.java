@@ -2,14 +2,15 @@ package com.jcryptosync.sync;
 
 import com.google.gson.Gson;
 import com.jcryptosync.data.MetaData;
-import com.jcryptosync.data.preferences.ContainerPreferences;
-import com.jcryptosync.data.preferences.SyncPreferences;
-import com.jcryptosync.data.preferences.UserPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.SyncPreferences;
+import com.jcryptosync.preferences.UserPreferences;
 import com.jcryptosync.domain.ListCryptFiles;
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
 import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.utils.SyncUtils;
+import com.jcryptosync.utils.TokenUtils;
 import com.jcryptosync.vfs.filesystem.CryptFileSystem;
 import com.jcryptosync.vfs.filesystem.FileOperations;
 import com.jcryptosync.vfs.webdav.CryptFile;
@@ -84,7 +85,7 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
                 break;
             }
 
-            byte[] sessionDigest = SyncUtils.generateSessionDigest(sessionId);
+            byte[] sessionDigest = TokenUtils.generateSessionDigest(sessionId);
 
             int jettyPort = ContainerPreferences.getInstance().getJettyPort();
 

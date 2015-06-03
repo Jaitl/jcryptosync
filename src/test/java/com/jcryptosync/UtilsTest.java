@@ -1,6 +1,7 @@
 package com.jcryptosync;
 
 import com.jcryptosync.utils.SyncUtils;
+import com.jcryptosync.utils.TokenUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ public class UtilsTest {
     @Test
     public void newNameTest() throws ParseException {
         String strDate = "14.05.2015 22:22:22";
-        Date date = SyncUtils.formatter.parse(strDate);
+        Date date = TokenUtils.formatter.parse(strDate);
         String name1 = "blabla";
         String name2 = "blabla.txt";
         String name3 = "blabla.bla.bla.mp4";

@@ -1,7 +1,6 @@
 package com.jcryptosync.ui.login;
 
-import com.jcryptosync.data.MasterKeyManager;
-import com.jcryptosync.domain.MainKey;
+import com.jcryptosync.data.MainKeyManager;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -25,11 +24,8 @@ public class CreateKeyController extends BaseLoginController {
     }
 
     @Override
-    protected MainKey computeMainKey() throws IOException, NoCorrectPasswordException {
-        MasterKeyManager keyManager = new MasterKeyManager();
-        keyManager.saveNewCryptKeyToFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
-
-        return keyManager.loadPrimaryKeyFromFile(firstPassword.getText(), Paths.get(pathToKey.getText()));
+    protected byte[] computeMainKey() throws IOException, NoCorrectPasswordException {
+        return new MainKeyManager().generateAndSaveNewMainKey(firstPassword.getText(), Paths.get(pathToKey.getText()));
     }
 
     @Override
@@ -50,6 +46,7 @@ public class CreateKeyController extends BaseLoginController {
     @Override
     public void prepareDialog() {
         super.prepareDialog();
+        currentMode = Mode.Create;
 
         isNewContainer.setManaged(false);
         isNewContainer.setVisible(false);

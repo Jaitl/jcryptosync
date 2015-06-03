@@ -2,13 +2,13 @@ package com.jcryptosync.sync;
 
 import com.google.gson.Gson;
 import com.jcryptosync.data.MetaData;
-import com.jcryptosync.data.preferences.ContainerPreferences;
-import com.jcryptosync.data.preferences.SyncPreferences;
-import com.jcryptosync.data.preferences.UserPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.SyncPreferences;
+import com.jcryptosync.preferences.UserPreferences;
 import com.jcryptosync.domain.ListCryptFiles;
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.domain.Token;
-import com.jcryptosync.utils.SyncUtils;
+import com.jcryptosync.utils.TokenUtils;
 import com.jcryptosync.vfs.webdav.CryptFile;
 import com.jcryptosync.vfs.webdav.Folder;
 import org.apache.log4j.Logger;
@@ -58,12 +58,12 @@ public class SyncServer implements SyncFiles {
         Map<String, SecondClient> clientMap = SyncPreferences.getInstance().getClientMap();
 
         if(clientMap.containsKey(sessionId)) {
-            if (SyncUtils.verifySessionDigest(sessionId, sessionDigest)) {
+            if (TokenUtils.verifySessionDigest(sessionId, sessionDigest)) {
                 String secondClientId = clientMap.get(sessionId).getIdClient();
 
                 log.info(String.format("authentication with %s, sessionId: %s", secondClientId, sessionId));
 
-                Token token = SyncUtils.generateToken(secondClientId, sessionId);
+                Token token = TokenUtils.generateToken(secondClientId, sessionId);
 
                 setSecondClientData(sessionId, token, remotePort);
 
@@ -182,7 +182,7 @@ public class SyncServer implements SyncFiles {
             return false;
 
         Map<String, SecondClient> clientMap = SyncPreferences.getInstance().getClientMap();
-        return SyncUtils.verifyToken(token, clientMap);
+        return TokenUtils.verifyToken(token, clientMap);
     }
 
     private void setSecondClientData(String sessionId, Token token, int remotePort) {

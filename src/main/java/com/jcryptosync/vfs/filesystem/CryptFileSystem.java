@@ -1,7 +1,7 @@
 package com.jcryptosync.vfs.filesystem;
 
 import com.jcryptosync.data.MetaData;
-import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
 import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.vfs.webdav.AbstractFile;
 import com.jcryptosync.vfs.webdav.CryptFile;

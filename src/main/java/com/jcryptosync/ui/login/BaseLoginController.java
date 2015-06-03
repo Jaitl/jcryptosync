@@ -1,13 +1,14 @@
 package com.jcryptosync.ui.login;
 
-import com.jcryptosync.data.preferences.SyncPreferences;
-import com.jcryptosync.data.preferences.UserPreferences;
-import com.jcryptosync.domain.MainKey;
+import com.jcryptosync.data.MainKeyManager;
+import com.jcryptosync.exceptoins.NoCorrectCompositeKeyException;
+import com.jcryptosync.exceptoins.NoCorrectMasterKeyException;
+import com.jcryptosync.preferences.SyncPreferences;
+import com.jcryptosync.preferences.UserPreferences;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.ui.container.ContainerController;
 import com.jcryptosync.ui.settings.SettingsController;
 import com.jcryptosync.utils.PasswordUtils;
-import com.jcryptosync.utils.SyncUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -51,9 +52,16 @@ public abstract class BaseLoginController {
     @FXML
     protected CheckBox isNewContainer;
 
+    protected enum Mode {
+        Login,
+        Create
+    };
+
+    protected Mode currentMode;
+
     @FXML
     protected abstract void changeControllerAction(ActionEvent event);
-    protected abstract MainKey computeMainKey() throws IOException, NoCorrectPasswordException;
+    protected abstract byte[] computeMainKey() throws IOException, NoCorrectPasswordException, NoCorrectCompositeKeyException, NoCorrectMasterKeyException;
 
     @FXML
     protected void selectKeyAction() {
@@ -68,7 +76,12 @@ public abstract class BaseLoginController {
             }
         }
 
-        File key = fileChooser.showOpenDialog(null);
+        File key = null;
+
+        if(currentMode == Mode.Login)
+            key = fileChooser.showOpenDialog(null);
+        else
+            key = fileChooser.showSaveDialog(null);
 
         if(key != null) {
             pathToKey.setText(key.getPath());
@@ -108,16 +121,16 @@ public abstract class BaseLoginController {
 
         if(checkFields()) {
             try {
-                MainKey mainKey = computeMainKey();
+                byte[] mainKey = computeMainKey();
 
                 UserPreferences.setPathToContainer(pathToContainer.getText());
                 UserPreferences.setPathToKey(pathToKey.getText());
 
-                String groupId = SyncUtils.computeGroupId(mainKey.getKey());
+                String groupId = MainKeyManager.computeGroupId(mainKey);
                 SyncPreferences.getInstance().setGroupId(groupId);
 
-                byte[] key = SyncUtils.computeKey(firstPassword.getText(), mainKey.getKey());
-                SyncPreferences.getInstance().setKey(key);
+                byte[] key = MainKeyManager.computeCompositeKey(firstPassword.getText(), mainKey);
+                SyncPreferences.getInstance().setCompositeKey(key);
 
                 showVFSDialog();
                 ((Node)(event.getSource())).getScene().getWindow().hide();
@@ -126,6 +139,10 @@ public abstract class BaseLoginController {
                 setError("Ошибка при работе с мастер-ключем.", pathToKey);
             } catch (NoCorrectPasswordException e) {
                 setError("Неправильный пароль.", firstPassword);
+            } catch (NoCorrectCompositeKeyException e) {
+                setError("Пароль и мастер-ключ не похдодят к выбранному контейнеру.", pathToContainer);
+            } catch (NoCorrectMasterKeyException e) {
+                setError("Мастер-ключ поврежден.", pathToKey);
             }
         }
     }
@@ -154,16 +171,19 @@ public abstract class BaseLoginController {
 
         Path pathToFolder = Paths.get(pathToContainer.getText()).getParent();
 
-        if(Files.notExists(pathToFolder)) {
+        if (Files.notExists(pathToFolder)) {
             setError("Путь до контейнера не существует", pathToContainer);
             return false;
         }
 
-        Path pathKey = Paths.get(pathToKey.getText());
+        if(currentMode == Mode.Login) {
 
-        if(Files.notExists(pathKey)) {
-            setError("Масте-ключ по указанному пути не найден", pathToContainer);
-            return false;
+            Path pathKey = Paths.get(pathToKey.getText());
+
+            if (Files.notExists(pathKey)) {
+                setError("Масте-ключ по указанному пути не найден", pathToKey);
+                return false;
+            }
         }
 
         return true;

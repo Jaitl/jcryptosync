@@ -1,7 +1,7 @@
 package com.jcryptosync.vfs.filesystem;
 
-import com.jcryptosync.data.preferences.ContainerPreferences;
-import com.jcryptosync.data.preferences.UserPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.UserPreferences;
 import com.jcryptosync.sync.VectorTimePair;
 import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.utils.CryptFactory;

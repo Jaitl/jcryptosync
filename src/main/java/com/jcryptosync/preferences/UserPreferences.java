@@ -1,4 +1,4 @@
-package com.jcryptosync.data.preferences;
+package com.jcryptosync.preferences;
 
 import java.io.IOException;
 import java.nio.file.Files;

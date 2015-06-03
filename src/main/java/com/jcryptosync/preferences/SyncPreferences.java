@@ -1,8 +1,7 @@
-package com.jcryptosync.data.preferences;
+package com.jcryptosync.preferences;
 
 import com.jcryptosync.domain.SecondClient;
 import com.jcryptosync.sync.SyncClient;
-import com.jcryptosync.ui.container.ShowMessage;
 import com.jcryptosync.vfs.manager.VFSManager;
 
 import java.util.HashMap;
@@ -13,7 +12,7 @@ public class SyncPreferences {
     private static final SyncPreferences instance = new SyncPreferences();
     private Map<String, String> settingsString = new HashMap<>();
     private Map<String, SecondClient> clientMap = new HashMap<>();
-    private byte[] key;
+    private byte[] compositeKey;
     private SyncClient syncClient;
     private VFSManager vfsManager;
 
@@ -33,12 +32,12 @@ public class SyncPreferences {
         return settingsString.get(GROUP_ID);
     }
 
-    public void setKey(byte[] key) {
-        this.key = key;
+    public void setCompositeKey(byte[] compositeKey) {
+        this.compositeKey = compositeKey;
     }
 
-    public byte[] getKey() {
-        return key;
+    public byte[] getCompositeKey() {
+        return compositeKey;
     }
 
     public SyncClient getSyncClient() {

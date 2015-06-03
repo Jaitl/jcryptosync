@@ -1,26 +1,15 @@
 package com.jcryptosync.ui.container;
 
 import com.jcryptosync.Bootloader;
-import com.jcryptosync.data.preferences.SyncPreferences;
 import com.jcryptosync.exceptoins.ContainerMountException;
 import com.jcryptosync.ui.info.InfoController;
 import com.jcryptosync.ui.settings.SettingsController;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class ContainerController implements ShowMessage {
     protected static Logger log = LoggerFactory.getLogger(ContainerController.class);

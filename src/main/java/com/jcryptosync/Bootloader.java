@@ -1,8 +1,8 @@
 package com.jcryptosync;
 
-import com.jcryptosync.data.preferences.ContainerPreferences;
-import com.jcryptosync.data.preferences.SyncPreferences;
-import com.jcryptosync.data.preferences.UserPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.SyncPreferences;
+import com.jcryptosync.preferences.UserPreferences;
 import com.jcryptosync.domain.User;
 import com.jcryptosync.exceptoins.ContainerMountException;
 import com.jcryptosync.sync.AsyncAction;
@@ -10,16 +10,11 @@ import com.jcryptosync.sync.SyncClient;
 import com.jcryptosync.ui.container.MessageService;
 import com.jcryptosync.utils.SyncUtils;
 import com.jcryptosync.vfs.manager.VFSManager;
-import io.milton.common.StreamUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.DosFileAttributes;
 import java.util.UUID;
 
 public class Bootloader {

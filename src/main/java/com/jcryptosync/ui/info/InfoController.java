@@ -1,7 +1,7 @@
 package com.jcryptosync.ui.info;
 
-import com.jcryptosync.data.preferences.ContainerPreferences;
-import com.jcryptosync.data.preferences.SyncPreferences;
+import com.jcryptosync.preferences.ContainerPreferences;
+import com.jcryptosync.preferences.SyncPreferences;
 import com.jcryptosync.vfs.manager.VFSManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
