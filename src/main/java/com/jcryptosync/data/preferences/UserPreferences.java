@@ -69,7 +69,7 @@ public class UserPreferences {
     }
 
     public static boolean isHardPassword() {
-        return Boolean.parseBoolean(preferences.get(HARD_PASSWORD, "FALSE"));
+        return Boolean.parseBoolean(preferences.get(HARD_PASSWORD, "TRUE"));
     }
 
     public static void setHardPassword(boolean hardPassword) {

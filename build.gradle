@@ -31,9 +31,7 @@ dependencies {
     compile 'org.mapdb:mapdb:1.0.7'
     compile 'com.sun.xml.ws:jaxws-ri:2.2.10'
 
-    //compile 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.4.2'
-    //compile 'org.eclipse.persistence:eclipselink:2.4.2'
-    //compile 'org.eclipse.persistence:commonj.sdo:2.1.1'
+    compile 'edu.vt.middleware:vt-password:3.1.2'
 
 }
 

@@ -6,6 +6,7 @@ import com.jcryptosync.domain.MainKey;
 import com.jcryptosync.exceptoins.NoCorrectPasswordException;
 import com.jcryptosync.ui.container.ContainerController;
 import com.jcryptosync.ui.settings.SettingsController;
+import com.jcryptosync.utils.PasswordUtils;
 import com.jcryptosync.utils.SyncUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -192,7 +193,11 @@ public abstract class BaseLoginController {
     }
 
     protected boolean checkPassword(String password) {
-        return true;
+        if(UserPreferences.isHardPassword())
+            return PasswordUtils.checkPassword(password);
+        else if(password.trim().length() > 0)
+            return true;
+        else return false;
     }
 
     protected void showVFSDialog() {
