@@ -150,17 +150,17 @@ public class SyncUtils {
         int end = UserPreferences.getEndPort();
 
         for(; port < end; port++) {
-            if(!portIsOpen(port))
+            if(!portIsOpen("localhost", port))
                 break;
         }
 
         return port;
     }
 
-    public static boolean portIsOpen(int port) {
+    public static boolean portIsOpen(String host, int port) {
         try {
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("localhost", port), 200);
+            socket.connect(new InetSocketAddress(host, port), 200);
             socket.close();
             return true;
         } catch (Exception ex) {

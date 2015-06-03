@@ -38,7 +38,7 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
         requestFullFileList();
     }
 
-    public List<SecondClient> findClients() {
+    public List<SecondClient> findClients(String host) {
         List<SecondClient> clientList = new ArrayList<>();
         int startPort = UserPreferences.getStartPort();
         int endPort = UserPreferences.getEndPort();
@@ -47,8 +47,8 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
 
         for(; startPort <= endPort; startPort++) {
             if(currentPort != startPort) {
-                if (SyncUtils.portIsOpen(startPort)) {
-                    clientList.add(new SecondClient("localhost", startPort));
+                if (SyncUtils.portIsOpen(host, startPort)) {
+                    clientList.add(new SecondClient(host, startPort));
 
                     log.info("found client, port: " + startPort);
                 }
@@ -58,7 +58,13 @@ public class SyncClient implements CryptFileSystem.ChangeEvents {
     }
 
     public void authentication() {
-        List<SecondClient> clientList = findClients();
+        List<SecondClient> clientList = findClients("localhost");
+        String remoteHost = UserPreferences.getClientAddress();
+
+        if(remoteHost != null && remoteHost.trim().length() > 4) {
+            List<SecondClient> remoteClientList = findClients(remoteHost);
+            clientList.addAll(remoteClientList);
+        }
 
         String clientId = ContainerPreferences.getInstance().getClientId();
         String groupId = SyncPreferences.getInstance().getGroupId();
