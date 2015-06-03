@@ -1,6 +1,7 @@
 package com.jcryptosync;
 
 import com.jcryptosync.data.preferences.ContainerPreferences;
+import com.jcryptosync.data.preferences.UserPreferences;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
@@ -9,9 +10,9 @@ import java.io.File;
 public class Jetty {
     private Server server;
 
-    private static final String webappDirLocation = "src/main/webapp/";
-
     public Jetty() {
+
+        String webappDirLocation = UserPreferences.getPathToContainer().getParent().resolve(".webapp").toString();
 
         int port = ContainerPreferences.getInstance().getJettyPort();
 
