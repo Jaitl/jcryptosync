@@ -79,7 +79,7 @@ public class MainKeyManager {
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
-            throw new NoCorrectPasswordException("Неправильный пароль");
+            throw new NoCorrectPasswordException("РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ РїР°СЂРѕР»СЊ");
         }
 
         String jsonKey = null;

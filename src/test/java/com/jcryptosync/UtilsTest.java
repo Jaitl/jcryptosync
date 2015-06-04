@@ -11,7 +11,7 @@ import java.util.Date;
 public class UtilsTest {
     @Test
     public void newNameTest() throws ParseException {
-        String strDate = "14.05.2015 22:22:22";
+        String strDate = "14.05.2015 22-22-22";
         Date date = TokenUtils.formatter.parse(strDate);
         String name1 = "blabla";
         String name2 = "blabla.txt";

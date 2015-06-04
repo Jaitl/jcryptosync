@@ -75,11 +75,11 @@ public class TokenUtils {
     public static boolean verifyToken(Token token, Map<String, SecondClient> clientMap) {
         byte[] digest = computeTokenDigest(token);
 
-        // Проверка подписи
+        // РџСЂРѕРІРµСЂРєР° РїРѕРґРїРёСЃРё
         if(!Arrays.equals(digest, token.getDigest()))
             return false;
 
-        // Проверка сессии
+        // РџСЂРѕРІРµСЂРєР° СЃРµСЃСЃРёРё
         if(!clientMap.containsKey(token.getSessionId()))
             return false;
 
@@ -109,7 +109,7 @@ public class TokenUtils {
 
         Date currentDate = new Date();
 
-        // Проверка срока действия токена
+        // РџСЂРѕРІРµСЂРєР° СЃСЂРѕРєР° РґРµР№СЃС‚РІРёСЏ С‚РѕРєРµРЅР°
         return currentDate.before(dateEnd);
 
 
