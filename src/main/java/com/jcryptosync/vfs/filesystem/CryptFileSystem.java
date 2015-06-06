@@ -49,7 +49,7 @@ public class CryptFileSystem {
 
         metaData.addFile(cryptFile);
 
-        log.debug("added new file: " + cryptFile.getName());
+        log.info("added new file: " + cryptFile.getName());
         MessageService.addFile(cryptFile);
 
         if(changeEvents != null) {
@@ -59,7 +59,7 @@ public class CryptFileSystem {
 
     public void createNewFolder(Folder newFolder) {
         metaData.addFile(newFolder);
-        log.debug("added folder file: " + newFolder.getName());
+        log.info("added folder file: " + newFolder.getName());
 
         MessageService.addFile(newFolder);
 
@@ -72,14 +72,14 @@ public class CryptFileSystem {
         if(cryptFile.getLength() > 0)
             FileOperations.decryptFile(cryptFile, os);
 
-        log.debug("get file content: " + cryptFile.getName());
+        log.info("get file content: " + cryptFile.getName());
         MessageService.openFile(cryptFile);
     }
 
     public void updateFile(CryptFile cryptFile, InputStream is) {
         FileOperations.updateFile(cryptFile, is);
 
-        log.debug("file updated: " + cryptFile.getName());
+        log.info("file updated: " + cryptFile.getName());
         MessageService.updateFile(cryptFile);
 
         cryptFile.setModDate(new Date());
@@ -108,7 +108,7 @@ public class CryptFileSystem {
         folder.setDeleted(true);
         metaData.updateFile(folder);
 
-        log.debug("folder deleted: " + folder.getName());
+        log.info("folder deleted: " + folder.getName());
         MessageService.deleteFile(folder);
 
         if(changeEvents != null)
@@ -126,7 +126,7 @@ public class CryptFileSystem {
 
         metaData.updateFile(cryptFile);
 
-        log.debug("file deleted: " + cryptFile.getName());
+        log.info("file deleted: " + cryptFile.getName());
         MessageService.deleteFile(cryptFile);
 
         if(changeEvents != null)
@@ -136,7 +136,7 @@ public class CryptFileSystem {
     public void renameFile(AbstractFile file, String name) {
         file.setModDate(new Date());
 
-        log.debug(String.format("file rename from %s to %s ", file.getName(), name));
+        log.info(String.format("file rename from %s to %s ", file.getName(), name));
         MessageService.renameFile(file, name);
 
         file.setName(name);
@@ -176,7 +176,7 @@ public class CryptFileSystem {
 
         metaData.updateFile(file);
 
-        log.debug(String.format("file moved: %s", name));
+        log.info(String.format("file moved: %s", name));
         MessageService.moveFile(file, folder);
     }
 

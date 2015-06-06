@@ -58,7 +58,7 @@ public class InfoController {
         InfoController controller = fxmlLoader.getController();
 
         Stage stage = new Stage();
-        stage.setTitle("Настройки");
+        stage.setTitle("Информация о клиенте");
 
         Scene scene = new Scene(root, 400, 300);
         scene.getStylesheets().add("styles/main.css");

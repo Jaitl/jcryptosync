@@ -14,7 +14,7 @@ public class LoginDialog  extends Application {
 
         primaryStage.setMinHeight(500);
         primaryStage.setMinHeight(370);
-        primaryStage.setTitle("Авторизация");
+        primaryStage.setTitle("Аутентификация");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
